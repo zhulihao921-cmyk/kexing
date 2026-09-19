@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f4f7f4" />
+  <title>科兴品牌情报看板</title>
+  <style>:root {
+  --ink: #18251f;
+  --muted: #6d7a73;
+  --line: #dfe6e1;
+  --paper: #ffffff;
+  --canvas: #f3f6f3;
+  --green: #006c50;
+  --green-dark: #07533f;
+  --green-soft: #e7f3ee;
+  --blue: #1b5fbf;
+  --blue-soft: #eaf1fb;
+  --amber: #a66212;
+  --amber-soft: #fff3df;
+  --red: #b83a32;
+  --red-soft: #fcecea;
+  --shadow: 0 18px 44px rgba(27, 51, 41, 0.08);
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: var(--ink);
+  background: var(--canvas);
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--canvas); }
+button, input, select { font: inherit; }
+button { color: inherit; }
+
+.app-shell { display: grid; grid-template-columns: 252px minmax(0, 1fr); min-height: 100vh; }
+.sidebar { position: sticky; top: 0; height: 100vh; padding: 30px 20px 22px; color: #eef8f3; background: linear-gradient(165deg, #092c23 0%, #0a3d2f 52%, #0a4c39 100%); display: flex; flex-direction: column; }
+.brand-block { display: flex; align-items: center; gap: 12px; padding: 0 8px 28px; border-bottom: 1px solid rgba(255,255,255,.12); }
+.brand-block strong { display: block; font-size: 16px; letter-spacing: .02em; }
+.brand-block small { display: block; margin-top: 4px; color: #9bb8ad; font-size: 9px; letter-spacing: .14em; }
+.brand-mark { position: relative; width: 34px; height: 34px; flex: 0 0 34px; border: 1px solid rgba(255,255,255,.25); border-radius: 11px; overflow: hidden; }
+.brand-mark span { position: absolute; width: 22px; height: 6px; border-radius: 8px; transform: rotate(-38deg); background: #80d4aa; }
+.brand-mark span:nth-child(1) { left: -3px; top: 5px; }
+.brand-mark span:nth-child(2) { left: 7px; top: 14px; background: #d8f4e6; }
+.brand-mark span:nth-child(3) { left: 17px; top: 23px; background: #45a877; }
+.category-nav { display: grid; gap: 7px; padding: 28px 0; overflow-y: auto; }
+.category-button { width: 100%; display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 10px; padding: 11px 12px; border: 0; border-radius: 10px; color: #b9d0c7; background: transparent; text-align: left; cursor: pointer; transition: .18s ease; }
+.category-button:hover { color: #fff; background: rgba(255,255,255,.07); }
+.category-button.active { color: #fff; background: rgba(255,255,255,.13); box-shadow: inset 3px 0 #77d2a6; }
+.category-icon { font-size: 15px; filter: saturate(.8); }
+.nav-count { min-width: 24px; padding: 2px 7px; border-radius: 999px; font-size: 11px; text-align: center; color: #c8ddd5; background: rgba(255,255,255,.1); }
+.category-button.active .nav-count { color: #0c4a37; background: #a5dfc1; }
+.sidebar-note { margin-top: auto; padding: 14px; display: flex; gap: 10px; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; background: rgba(255,255,255,.06); }
+.pulse-dot { width: 8px; height: 8px; margin-top: 4px; border-radius: 50%; background: #71d39f; box-shadow: 0 0 0 4px rgba(113,211,159,.1); }
+.sidebar-note strong, .sidebar-note small { display: block; }
+.sidebar-note strong { font-size: 12px; }
+.sidebar-note small { margin-top: 5px; font-size: 10px; color: #9db9ae; line-height: 1.4; }
+.sidebar-footer { padding: 16px 4px 0; color: #779b8e; font-size: 9px; letter-spacing: .14em; }
+
+.main-content { min-width: 0; padding: 42px clamp(24px, 4.5vw, 68px) 68px; }
+.topbar { display: flex; align-items: flex-end; justify-content: space-between; gap: 28px; margin: 0 auto 26px; max-width: 1500px; }
+.eyebrow { color: var(--green); font-size: 10px; font-weight: 750; letter-spacing: .16em; }
+h1 { margin: 9px 0 5px; font-size: clamp(26px, 3.2vw, 42px); line-height: 1.13; letter-spacing: -.04em; }
+.date-range { margin: 0; color: var(--muted); font-size: 13px; }
+.top-actions { display: flex; align-items: flex-end; gap: 10px; }
+.date-control, .filter-select { display: flex; flex-direction: column; gap: 6px; color: var(--muted); font-size: 11px; }
+.date-control select, .filter-select select { min-width: 140px; height: 42px; padding: 0 34px 0 12px; color: var(--ink); border: 1px solid var(--line); border-radius: 9px; outline: none; background: var(--paper); }
+.button { height: 42px; padding: 0 16px; border: 1px solid transparent; border-radius: 9px; font-size: 12px; font-weight: 650; cursor: pointer; transition: .18s ease; white-space: nowrap; }
+.button.secondary { color: #fff; background: var(--green); }
+.button.secondary:hover { background: var(--green-dark); transform: translateY(-1px); }
+.button.ghost { border-color: var(--line); background: #fff; }
+.button.ghost:hover { border-color: #b7c7bf; }
+
+.decision-grid { display: grid; grid-template-columns: 1.25fr 1fr 1fr 1fr; gap: 12px; margin: 0 auto 18px; max-width: 1500px; }
+.decision-card { min-height: 146px; padding: 18px 20px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.78); box-shadow: 0 8px 20px rgba(24,48,37,.03); }
+.decision-card.primary { color: #fff; border-color: #0a6049; background: linear-gradient(145deg, #07563f 0%, #0d7a5a 100%); box-shadow: 0 16px 30px rgba(0,93,69,.18); }
+.decision-label { color: var(--muted); font-size: 10px; font-weight: 750; letter-spacing: .12em; }
+.primary .decision-label { color: #b8dfcf; }
+.metric-row { display: flex; align-items: baseline; gap: 8px; margin-top: 12px; }
+.metric-row strong { font-size: 30px; line-height: 1; letter-spacing: -.04em; }
+.metric-row span { color: var(--muted); font-size: 12px; }
+.primary .metric-row span { color: #d2ebe1; }
+.decision-card p { margin: 13px 0 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
+.primary p { color: #d9eee6; }
+.text-button { padding: 11px 0 0; border: 0; color: var(--green); background: transparent; font-size: 11px; font-weight: 700; cursor: pointer; }
+
+.workspace-panel { max-width: 1500px; margin: 0 auto; border: 1px solid var(--line); border-radius: 16px; background: var(--paper); box-shadow: var(--shadow); overflow: hidden; }
+.workspace-header { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 22px 24px 17px; }
+.workspace-title-row { display: flex; align-items: center; gap: 10px; }
+.workspace-header h2 { margin: 0; font-size: 18px; letter-spacing: -.02em; }
+.workspace-header p { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
+.result-count { padding: 3px 8px; border-radius: 999px; color: var(--green); background: var(--green-soft); font-size: 10px; font-weight: 700; }
+.view-switch { display: flex; padding: 3px; border-radius: 9px; background: #f0f3f1; }
+.view-tab { padding: 7px 12px; border: 0; border-radius: 7px; color: var(--muted); background: transparent; font-size: 11px; cursor: pointer; }
+.view-tab.active { color: var(--ink); background: #fff; box-shadow: 0 2px 8px rgba(32,55,44,.08); font-weight: 700; }
+.filters { display: grid; grid-template-columns: minmax(260px, 1fr) repeat(3, auto) auto; align-items: end; gap: 9px; padding: 0 24px 18px; }
+.search-box { position: relative; }
+.search-box svg { position: absolute; left: 12px; top: 13px; width: 16px; fill: none; stroke: #718078; stroke-width: 1.7; stroke-linecap: round; }
+.search-box input { width: 100%; height: 42px; padding: 0 14px 0 37px; border: 1px solid var(--line); border-radius: 9px; outline: none; }
+.search-box input:focus, select:focus { border-color: #66a892; box-shadow: 0 0 0 3px rgba(0,108,80,.08); }
+.filter-select select { min-width: 112px; }
+.quality-strip { display: flex; align-items: center; gap: 18px; min-height: 42px; padding: 0 24px; border-top: 1px solid #edf1ee; border-bottom: 1px solid #edf1ee; color: var(--muted); background: #fafcfa; font-size: 10px; }
+.quality-strip span { display: flex; align-items: center; gap: 6px; }
+.quality-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; }
+.quality-dot.green { background: #2d9b68; }.quality-dot.blue { background: #4f7ec5; }.quality-dot.amber { background: #d18a30; }
+.demo-badge { margin-left: auto; padding: 4px 7px; border: 1px solid #e3cda9; border-radius: 5px; color: #8b5e1f; background: #fff9ed; font-weight: 750; letter-spacing: .08em; }
+.feed { padding: 6px 24px 18px; }
+.news-card { display: grid; grid-template-columns: 96px minmax(0,1fr) 132px; gap: 18px; padding: 23px 2px; border-bottom: 1px solid #e9eeeb; }
+.news-card:last-child { border-bottom: 0; }
+.card-meta { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; }
+.priority { min-width: 34px; padding: 3px 7px; border-radius: 5px; font-size: 9px; font-weight: 800; text-align: center; }
+.priority.high { color: var(--red); background: var(--red-soft); }.priority.mid-high { color: var(--amber); background: var(--amber-soft); }.priority.mid { color: var(--blue); background: var(--blue-soft); }
+.status-badge { font-size: 10px; font-weight: 800; letter-spacing: .06em; }
+.status-badge.NEW { color: var(--green); }.status-badge.UPDATE { color: var(--blue); }
+.time { color: #8a958f; font-size: 10px; }
+.card-body { min-width: 0; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+.topic-tag { padding: 3px 7px; border-radius: 4px; color: #66736c; background: #f1f4f2; font-size: 9px; }
+.merge-tag { color: #6f4b12; background: #fff4df; }
+.card-title { margin: 0; font-size: 16px; line-height: 1.45; letter-spacing: -.01em; }
+.card-title button { padding: 0; border: 0; color: inherit; background: transparent; font-weight: 750; text-align: left; cursor: pointer; }
+.card-title button:hover { color: var(--green); }
+.summary-block { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 13px; }
+.fact, .action { position: relative; margin: 0; padding-left: 48px; color: #4e5d55; font-size: 12px; line-height: 1.7; }
+.fact::before, .action::before { position: absolute; left: 0; top: 2px; width: 36px; color: #829087; font-size: 9px; font-weight: 800; letter-spacing: .06em; }
+.fact::before { content: "事实"; }.action::before { content: "行动"; }
+.action { padding-top: 8px; padding-bottom: 8px; padding-right: 12px; border-radius: 7px; color: #244c3c; background: #f0f7f4; }
+.action::before { top: 10px; color: var(--green); }
+.source-line { margin-top: 13px; padding-top: 12px; border-top: 1px dashed #e0e7e3; }
+.source-name { color: #506158; font-size: 10px; font-weight: 700; }
+.bare-link { display: block; margin-top: 4px; color: #547066; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10px; line-height: 1.4; text-decoration: none; overflow-wrap: anywhere; }
+.bare-link:hover { color: var(--green); text-decoration: underline; }
+.merged-sources { margin: 10px 0 0; padding: 9px 12px; border-radius: 7px; background: #f8faf8; }
+.merged-sources summary { color: #53635b; font-size: 10px; font-weight: 700; cursor: pointer; }
+.merged-sources ul { margin: 9px 0 0; padding-left: 16px; color: var(--muted); font-size: 10px; line-height: 1.7; }
+.card-actions { display: flex; flex-direction: column; align-items: stretch; gap: 7px; }
+.card-action { min-height: 34px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; color: #56655d; background: #fff; font-size: 10px; font-weight: 650; cursor: pointer; }
+.card-action:hover { border-color: #a6bbb1; color: var(--green); }
+.card-action.active { border-color: #8bc0ac; color: var(--green); background: var(--green-soft); }
+.empty-state { padding: 70px 20px 78px; text-align: center; color: var(--ink); }
+.empty-state div { font-weight: 750; }.empty-state p { margin: 8px 0 18px; color: var(--muted); font-size: 12px; }
+.toast { position: fixed; left: 50%; bottom: 28px; z-index: 10; transform: translate(-50%, 20px); padding: 10px 16px; border-radius: 8px; color: #fff; background: #173d30; box-shadow: 0 12px 30px rgba(0,0,0,.16); font-size: 11px; opacity: 0; pointer-events: none; transition: .24s ease; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (max-width: 1100px) {
+  .decision-grid { grid-template-columns: repeat(2, 1fr); }
+  .filters { grid-template-columns: 1fr repeat(2, auto); }
+  .search-box { grid-column: 1 / -1; }
+  .filter-select:nth-of-type(4) { display: none; }
+}
+@media (max-width: 800px) {
+  .app-shell { display: block; }
+  .sidebar { position: static; width: auto; height: auto; padding: 18px; }
+  .brand-block { padding-bottom: 16px; }
+  .category-nav { display: flex; padding: 14px 0 0; overflow-x: auto; }
+  .category-button { grid-template-columns: auto auto; width: auto; min-width: max-content; padding: 9px 11px; }
+  .category-icon, .sidebar-note, .sidebar-footer { display: none; }
+  .main-content { padding: 24px 14px 44px; }
+  .topbar { align-items: flex-start; flex-direction: column; }
+  .top-actions { width: 100%; }
+  .date-control { flex: 1; }.date-control select { width: 100%; }
+  .decision-grid { grid-template-columns: 1fr 1fr; }
+  .workspace-header { align-items: flex-start; flex-direction: column; }
+  .filters { grid-template-columns: 1fr 1fr; }
+  .search-box { grid-column: 1 / -1; }
+  .filter-select select { width: 100%; min-width: 0; }
+  .quality-strip { overflow-x: auto; white-space: nowrap; }
+  .news-card { grid-template-columns: 70px minmax(0,1fr); }
+  .card-actions { grid-column: 2; flex-direction: row; }
+  .card-action { flex: 1; }
+}
+@media (max-width: 560px) {
+  .decision-grid { grid-template-columns: 1fr; }
+  .decision-card { min-height: 126px; }
+  .top-actions { align-items: stretch; flex-direction: column; }
+  .filters { grid-template-columns: 1fr; }
+  .search-box { grid-column: auto; }
+  .news-card { grid-template-columns: 1fr; gap: 10px; }
+  .card-meta { flex-direction: row; align-items: center; }
+  .card-actions { grid-column: auto; }
+  .fact, .action { padding-left: 42px; }
+}
+</style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="情报栏目">
+      <div class="brand-block">
+        <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div>
+          <strong>科兴品牌情报</strong>
+          <small>INTERNAL WORKSPACE</small>
+        </div>
+      </div>
+
+      <nav id="categoryNav" class="category-nav"></nav>
+
+      <div class="sidebar-note">
+        <span class="pulse-dot"></span>
+        <div>
+          <strong>日报规则已接入</strong>
+          <small>工作日 08:00 · Asia/Shanghai</small>
+        </div>
+      </div>
+      <div class="sidebar-footer">PRIVATE · OWNER ONLY</div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">BRAND INTELLIGENCE / DAILY DESK</div>
+          <h1>今天最需要关注什么？</h1>
+          <p id="dateRangeText" class="date-range"></p>
+        </div>
+        <div class="top-actions">
+          <label class="date-control">
+            <span>日报日期</span>
+            <select id="dateFilter" aria-label="选择日报日期"></select>
+          </label>
+          <button id="exportButton" class="button secondary" type="button">复制当日简报</button>
+        </div>
+      </header>
+
+      <section class="decision-grid" aria-label="今日决策摘要">
+        <article class="decision-card primary">
+          <div class="decision-label">优先处置</div>
+          <div class="metric-row"><strong id="highCount">0</strong><span>条高优情报</span></div>
+          <p id="highSummary">筛选后暂无高优情报</p>
+        </article>
+        <article class="decision-card">
+          <div class="decision-label">有效更新</div>
+          <div class="metric-row"><strong id="updateCount">0</strong><span>条 UPDATE</span></div>
+          <p>仅保留出现新数字、新阶段、新政策或新影响的事项</p>
+        </article>
+        <article class="decision-card">
+          <div class="decision-label">去重质检</div>
+          <div class="metric-row"><strong id="dedupeCount">0</strong><span>条已归并</span></div>
+          <p>同类开打新闻合并；跨专题内容只保留一个主归属</p>
+        </article>
+        <article class="decision-card watch-card">
+          <div class="decision-label">我的盯防</div>
+          <div class="metric-row"><strong id="watchCount">0</strong><span>条进行中</span></div>
+          <button id="showWatchButton" class="text-button" type="button">只看已盯防 →</button>
+        </article>
+      </section>
+
+      <section class="workspace-panel">
+        <div class="workspace-header">
+          <div>
+            <div class="workspace-title-row">
+              <h2 id="viewTitle">全部情报</h2>
+              <span id="resultCount" class="result-count">0 条</span>
+            </div>
+            <p>示例数据用于验证交互；结构与质检逻辑来自现行日报规则。</p>
+          </div>
+          <div class="view-switch" role="group" aria-label="工作视图">
+            <button class="view-tab active" data-view="all" type="button">全部</button>
+            <button class="view-tab" data-view="unread" type="button">未读</button>
+            <button class="view-tab" data-view="watch" type="button">盯防</button>
+          </div>
+        </div>
+
+        <div class="filters" aria-label="筛选器">
+          <label class="search-box">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.3-4.3m2.3-5.2a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"/></svg>
+            <input id="searchInput" type="search" placeholder="搜索标题、事实、行动建议或来源" />
+          </label>
+          <label class="filter-select"><span>状态</span><select id="statusFilter"><option value="all">全部</option><option value="NEW">NEW</option><option value="UPDATE">UPDATE</option></select></label>
+          <label class="filter-select"><span>重要性</span><select id="priorityFilter"><option value="all">全部</option><option value="高">高</option><option value="中高">中高</option><option value="中">中</option></select></label>
+          <label class="filter-select"><span>专题</span><select id="topicFilter"><option value="all">全部专题</option></select></label>
+          <button id="resetFilters" class="button ghost" type="button">清除筛选</button>
+        </div>
+
+        <div class="quality-strip">
+          <span><i class="quality-dot green"></i>原始链接已保留</span>
+          <span><i class="quality-dot blue"></i>专题与热点单一归属</span>
+          <span><i class="quality-dot amber"></i>历史上下文不计入 NEW</span>
+          <span class="demo-badge">DEMO DATA</span>
+        </div>
+
+        <div id="feed" class="feed" aria-live="polite"></div>
+        <div id="emptyState" class="empty-state" hidden>
+          <div>没有符合当前条件的情报</div>
+          <p>可以清除部分筛选，或切换日期查看。</p>
+          <button class="button secondary" type="button" data-reset>清除筛选</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script>const categories = [
+  { id: "all", label: "全部情报", icon: "◫" },
+  { id: "行业动态", label: "行业动态", icon: "▦" },
+  { id: "竞品动态", label: "竞品动态", icon: "◎" },
+  { id: "热点新闻", label: "热点新闻", icon: "↗" },
+  { id: "全球疫情雷达", label: "全球疫情雷达", icon: "◉" },
+  { id: "流感专题", label: "流感专题", icon: "✦" },
+  { id: "其他重点产品", label: "其他重点产品", icon: "＋" }
+];
+
+const news = [
+  {
+    id: "n-0918-01", date: "2026-09-18", time: "06:48", category: "流感专题", status: "UPDATE", priority: "高",
+    title: "多地进入流感疫苗集中开打阶段，免费与自费接种同步推进",
+    topics: ["流感", "各地开打", "重点人群"], merged: 6,
+    fact: "【示例】北京、浙江、深圳、山东等地在同一监测窗口出现开打或采购进展，已按“同类事实合并”规则汇总为一条；其中新增信息集中在接种点扩容、免费人群范围与预约方式。",
+    action: "按省份形成“已进场—待进场—可补位”清单，与招采节奏联动；优先准备儿童、老年人和慢病人群的终端沟通素材。",
+    source: "多地疾控与卫健部门（示例汇总）", url: "https://example.com/demo/influenza-rollout-2026-09-18",
+    mergedSources: ["北京市：重点人群免费接种启动（示例）", "浙江省：接种点服务扩容（示例）", "深圳市：预约接种安排更新（示例）", "山东省：重点人群项目进展（示例）"]
+  },
+  {
+    id: "n-0918-02", date: "2026-09-18", time: "06:32", category: "竞品动态", status: "NEW", priority: "高",
+    title: "主要流感疫苗企业渠道动作进入密集期，终端资源竞争升温",
+    topics: ["流感", "竞品", "渠道"],
+    fact: "【示例】中生、华兰、赛诺菲、智飞等重点竞品在区域准入、学术推广或终端覆盖上出现新增动作，市场从单一价格竞争转向供货能力与接种动员效率竞争。",
+    action: "建立竞品“省份—产品—价格—渠道动作”对照表；对儿童主力市场单独跟踪终端可及性与家长决策内容。",
+    source: "企业与区域采购公开信息（示例）", url: "https://example.com/demo/competitor-tracker-2026-09-18"
+  },
+  {
+    id: "n-0918-03", date: "2026-09-18", time: "05:56", category: "全球疫情雷达", status: "UPDATE", priority: "中高",
+    title: "南半球流感活动进入季末观察期，老年重症负担仍需持续跟踪",
+    topics: ["南半球", "老年人", "重症"],
+    fact: "【示例】近期海外监测提示总体活动趋缓，但老年人住院与重症指标仍有滞后，部分地区继续强调高风险人群的疫苗与抗病毒干预。",
+    action: "回查各国卫生部门原始周报，重点提取60岁以上住院、ICU及毒株变化数据，为国内高风险人群传播提供证据线索。",
+    source: "海外卫生部门周报（示例）", url: "https://example.com/demo/global-flu-radar-2026-09-18"
+  },
+  {
+    id: "n-0918-04", date: "2026-09-18", time: "05:20", category: "行业动态", status: "NEW", priority: "中高",
+    title: "多地推进二级医疗机构预防接种服务，疫苗可及性出现新入口",
+    topics: ["接种服务", "二级医疗机构", "政策"],
+    fact: "【示例】部分地区继续探索在二级医疗机构开展成人及重点人群预防接种服务，服务场景从传统接种门诊向临床科室协同延伸。",
+    action: "关注准入标准、收费方式及院内推荐路径；提前形成慢病门诊、老年医学和妇幼场景的合规沟通工具。",
+    source: "地方卫健部门（示例）", url: "https://example.com/demo/hospital-vaccination-2026-09-18"
+  },
+  {
+    id: "n-0918-05", date: "2026-09-18", time: "04:35", category: "其他重点产品", status: "NEW", priority: "中高",
+    title: "托幼机构手足口病防控进入秋季重点窗口，EV71风险教育需求上升",
+    topics: ["手足口", "EV71", "儿童"],
+    fact: "【示例】多地面向托幼机构发布秋季传染病防控提示，强调晨检、病例隔离和环境消毒；家长端对重症风险与疫苗保护范围的认知仍较碎片化。",
+    action: "将EV71疫苗传播从泛疾病科普收紧到“重症风险—适龄窗口—两剂程序”，并为未来多价产品教育保留承接空间。",
+    source: "地方疾控中心（示例）", url: "https://example.com/demo/ev71-autumn-2026-09-18"
+  },
+  {
+    id: "n-0918-06", date: "2026-09-18", time: "03:44", category: "热点新闻", status: "NEW", priority: "中",
+    title: "社交平台“疫苗成分”讨论升温，碎片化信息放大接种犹豫",
+    topics: ["舆情", "成分", "疫苗犹豫"],
+    fact: "【示例】围绕防腐剂、过敏与不良反应的讨论出现扩散，部分高互动内容混淆不同疫苗类型与适用人群，评论区呈现明显求证需求。",
+    action: "不直接卷入个别争论；用医生共创内容集中回答真实决策问题，并对明显错误信息建立快速反馈与分级回应机制。",
+    source: "公开社交平台监测（示例）", url: "https://example.com/demo/social-listening-2026-09-18"
+  },
+  {
+    id: "n-0917-01", date: "2026-09-17", time: "06:52", category: "其他重点产品", status: "NEW", priority: "高",
+    title: "无血清狂犬病疫苗出现新增市场进展，技术路线关注度提升",
+    topics: ["狂犬病", "技术路线", "新品"],
+    fact: "【示例】国内狂犬病疫苗市场出现新的产品或商业化进展，“无血清培养”等技术标签带动行业与公众关注。",
+    action: "区分技术概念、临床价值与传播卖点，持续跟踪批签发、终端覆盖及竞品教育话术，避免仅凭技术标签判断市场影响。",
+    source: "企业公开信息（示例）", url: "https://example.com/demo/rabies-market-2026-09-17"
+  },
+  {
+    id: "n-0917-02", date: "2026-09-17", time: "06:10", category: "流感专题", status: "NEW", priority: "高",
+    title: "校园流感聚集性事件受到关注，接种窗口与家庭决策讨论同步上升",
+    topics: ["流感", "校园", "热点"], merged: 4,
+    fact: "【示例】上海、杭州等地校园流感相关讨论在监测窗口内集中出现，已将地区新闻和热点舆情合并为一条，避免在“热点新闻”重复展示。",
+    action: "把传播重点放在症状识别、缺课管理、家庭防护与尽早接种的完整链路；关注停课、重症或政策变化是否触发舆情升级。",
+    source: "地方媒体与疾控信息（示例汇总）", url: "https://example.com/demo/campus-flu-2026-09-17",
+    mergedSources: ["上海校园健康提示（示例）", "杭州聚集性疫情报道（示例）", "地方疾控防控建议（示例）"]
+  },
+  {
+    id: "n-0917-03", date: "2026-09-17", time: "05:08", category: "行业动态", status: "UPDATE", priority: "中高",
+    title: "多省公费流感疫苗采购进入新阶段，区域执行差异进一步显现",
+    topics: ["公费采购", "招采", "省份"],
+    fact: "【示例】部分省份从采购意向进入评审、结果公示或配送准备阶段；不同地区在抽签、分包和供应保障机制上存在差异。",
+    action: "只把出现新阶段的省份计为UPDATE；同步维护关键节点日历，避免旧采购公告因再次传播而被误判为NEW。",
+    source: "省级采购平台（示例）", url: "https://example.com/demo/public-procurement-2026-09-17"
+  },
+  {
+    id: "n-0917-04", date: "2026-09-17", time: "04:26", category: "全球疫情雷达", status: "NEW", priority: "中",
+    title: "海外水痘暴发线索增加，学校与免疫空白人群成为监测重点",
+    topics: ["水痘", "学校", "海外"],
+    fact: "【示例】高召回线索池发现部分国家学校场景的水痘活动，原始官方通报仍需逐条回查后再判断是否进入正式日报。",
+    action: "列入线索池，不直接上升为高风险判断；核验病例规模、时间窗口、免疫史和官方风险等级。",
+    source: "全球传染病动态线索池（示例）", url: "https://example.com/demo/varicella-signal-2026-09-17"
+  },
+  {
+    id: "n-0916-01", date: "2026-09-16", time: "06:42", category: "竞品动态", status: "UPDATE", priority: "高",
+    title: "流感疫苗市场价格与供货策略分化，省级竞争格局进入重排期",
+    topics: ["流感", "价格", "供货"],
+    fact: "【示例】重点企业在不同省份呈现差异化报价、供货和渠道组合，单纯比较中标价格不足以判断真实竞争强度。",
+    action: "将份额、配送能力、首批到货和终端动销纳入同一评估框架，区分“中标”与“真正打下去”。",
+    source: "公开招采与渠道信息（示例）", url: "https://example.com/demo/flu-market-2026-09-16"
+  },
+  {
+    id: "n-0916-02", date: "2026-09-16", time: "05:55", category: "其他重点产品", status: "NEW", priority: "中高",
+    title: "秋季犬伤门诊就诊提示增多，狂犬病暴露后处置认知仍有缺口",
+    topics: ["狂犬病", "犬伤", "暴露后处置"],
+    fact: "【示例】多地健康提示强调暴露后及时规范处置，但公众对伤口冲洗、分级和疫苗程序仍存在常见误区。",
+    action: "用场景化问答覆盖“是否需要打、去哪里打、如何按程序完成”，同时监测疫苗供应与门诊服务舆情。",
+    source: "地方疾控与犬伤门诊（示例）", url: "https://example.com/demo/rabies-pep-2026-09-16"
+  }
+];
+
+const state = {
+  date: "2026-09-18",
+  category: "all",
+  status: "all",
+  priority: "all",
+  topic: "all",
+  query: "",
+  view: "all",
+  watched: new Set(JSON.parse(localStorage.getItem("sinovac-watch") || "[]")),
+  read: new Set(JSON.parse(localStorage.getItem("sinovac-read") || "[]"))
+};
+
+const els = Object.fromEntries(["categoryNav","dateFilter","dateRangeText","statusFilter","priorityFilter","topicFilter","searchInput","resetFilters","feed","emptyState","viewTitle","resultCount","highCount","updateCount","dedupeCount","watchCount","highSummary","toast","exportButton","showWatchButton"].map(id => [id, document.getElementById(id)]));
+
+function unique(values) { return [...new Set(values)]; }
+function formatDate(date) {
+  const d = new Date(date + "T00:00:00");
+  return `${d.getMonth()+1}月${d.getDate()}日`;
+}
+function priorityClass(p) { return p === "高" ? "high" : p === "中高" ? "mid-high" : "mid"; }
+function escapeHtml(value) { return String(value).replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c])); }
+
+function init() {
+  const dates = unique(news.map(n => n.date)).sort().reverse();
+  els.dateFilter.innerHTML = dates.map(d => `<option value="${d}">${d} · ${formatDate(d)}</option>`).join("");
+  const topics = unique(news.flatMap(n => n.topics)).sort((a,b) => a.localeCompare(b,"zh-CN"));
+  els.topicFilter.innerHTML += topics.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("");
+  bindEvents();
+  render();
+}
+
+function getBaseForDate() { return news.filter(n => n.date === state.date); }
+function filteredNews() {
+  const q = state.query.toLowerCase();
+  return getBaseForDate().filter(item => {
+    const haystack = [item.title,item.fact,item.action,item.source,...item.topics].join(" ").toLowerCase();
+    return (state.category === "all" || item.category === state.category)
+      && (state.status === "all" || item.status === state.status)
+      && (state.priority === "all" || item.priority === state.priority)
+      && (state.topic === "all" || item.topics.includes(state.topic))
+      && (!q || haystack.includes(q))
+      && (state.view !== "watch" || state.watched.has(item.id))
+      && (state.view !== "unread" || !state.read.has(item.id));
+  }).sort((a,b) => ({"高":3,"中高":2,"中":1}[b.priority] - {"高":3,"中高":2,"中":1}[a.priority]) || b.time.localeCompare(a.time));
+}
+
+function render() {
+  renderNav();
+  const items = filteredNews();
+  const currentCategory = categories.find(c => c.id === state.category)?.label || "全部情报";
+  els.viewTitle.textContent = state.view === "watch" ? "我的盯防" : state.view === "unread" ? "未读情报" : currentCategory;
+  els.resultCount.textContent = `${items.length} 条`;
+  els.dateRangeText.textContent = `${formatDate(state.date)}日报 · 监测窗口 07:00—次日 07:00 · 北京时间`;
+  els.feed.innerHTML = items.map(cardTemplate).join("");
+  els.feed.hidden = !items.length;
+  els.emptyState.hidden = !!items.length;
+  updateMetrics();
+  bindCardActions();
+}
+
+function renderNav() {
+  const base = getBaseForDate();
+  els.categoryNav.innerHTML = categories.map(c => {
+    const count = c.id === "all" ? base.length : base.filter(n => n.category === c.id).length;
+    return `<button class="category-button ${state.category === c.id ? "active" : ""}" data-category="${c.id}" type="button"><span class="category-icon">${c.icon}</span><span>${c.label}</span><span class="nav-count">${count}</span></button>`;
+  }).join("");
+  els.categoryNav.querySelectorAll("button").forEach(button => button.addEventListener("click", () => {
+    state.category = button.dataset.category;
+    state.view = "all";
+    setActiveView();
+    render();
+  }));
+}
+
+function cardTemplate(item) {
+  const watched = state.watched.has(item.id);
+  const read = state.read.has(item.id);
+  return `<article class="news-card" data-id="${item.id}">
+    <div class="card-meta">
+      <span class="priority ${priorityClass(item.priority)}">${item.priority}优</span>
+      <span class="status-badge ${item.status}">${item.status}</span>
+      <span class="time">${item.time}</span>
+    </div>
+    <div class="card-body">
+      <div class="tag-row"><span class="topic-tag">${item.category}</span>${item.topics.map(t => `<span class="topic-tag">${escapeHtml(t)}</span>`).join("")}${item.merged ? `<span class="topic-tag merge-tag">已合并 ${item.merged} 条</span>` : ""}</div>
+      <h3 class="card-title"><button class="title-button" type="button">${escapeHtml(item.title)}</button></h3>
+      <div class="summary-block">
+        <p class="fact">${escapeHtml(item.fact)}</p>
+        <p class="action">${escapeHtml(item.action)}</p>
+      </div>
+      <div class="source-line">
+        <span class="source-name">来源：${escapeHtml(item.source)}</span>
+        <a class="bare-link" href="${item.url}" target="_blank" rel="noreferrer">${item.url}</a>
+        ${item.mergedSources ? `<details class="merged-sources"><summary>查看已归并来源（${item.mergedSources.length}）</summary><ul>${item.mergedSources.map(s => `<li>${escapeHtml(s)}</li>`).join("")}</ul></details>` : ""}
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="card-action watch-action ${watched ? "active" : ""}" type="button">${watched ? "✓ 已盯防" : "+ 加入盯防"}</button>
+      <button class="card-action read-action ${read ? "active" : ""}" type="button">${read ? "✓ 已阅" : "标记已阅"}</button>
+      <button class="card-action copy-action" type="button">复制链接</button>
+    </div>
+  </article>`;
+}
+
+function updateMetrics() {
+  const base = getBaseForDate();
+  const highs = base.filter(n => n.priority === "高");
+  els.highCount.textContent = highs.length;
+  els.updateCount.textContent = base.filter(n => n.status === "UPDATE").length;
+  els.dedupeCount.textContent = base.reduce((sum,n) => sum + (n.merged ? n.merged - 1 : 0), 0);
+  els.watchCount.textContent = base.filter(n => state.watched.has(n.id)).length;
+  els.highSummary.textContent = highs.length ? highs.slice(0,2).map(n => n.title.replace(/[，。].*/, "")).join("；") : "当日暂无高优情报";
+}
+
+function bindEvents() {
+  els.dateFilter.addEventListener("change", e => { state.date = e.target.value; render(); });
+  els.statusFilter.addEventListener("change", e => { state.status = e.target.value; render(); });
+  els.priorityFilter.addEventListener("change", e => { state.priority = e.target.value; render(); });
+  els.topicFilter.addEventListener("change", e => { state.topic = e.target.value; render(); });
+  els.searchInput.addEventListener("input", e => { state.query = e.target.value.trim(); render(); });
+  els.resetFilters.addEventListener("click", resetFilters);
+  document.querySelector("[data-reset]").addEventListener("click", resetFilters);
+  document.querySelectorAll(".view-tab").forEach(button => button.addEventListener("click", () => { state.view = button.dataset.view; setActiveView(); render(); }));
+  els.showWatchButton.addEventListener("click", () => { state.view = "watch"; setActiveView(); render(); document.querySelector(".workspace-panel").scrollIntoView({behavior:"smooth"}); });
+  els.exportButton.addEventListener("click", exportBrief);
+}
+
+function bindCardActions() {
+  els.feed.querySelectorAll(".news-card").forEach(card => {
+    const item = news.find(n => n.id === card.dataset.id);
+    card.querySelector(".watch-action").addEventListener("click", () => {
+      state.watched.has(item.id) ? state.watched.delete(item.id) : state.watched.add(item.id);
+      localStorage.setItem("sinovac-watch", JSON.stringify([...state.watched])); render(); showToast(state.watched.has(item.id) ? "已加入盯防" : "已移出盯防");
+    });
+    const markRead = () => { state.read.add(item.id); localStorage.setItem("sinovac-read", JSON.stringify([...state.read])); render(); };
+    card.querySelector(".read-action").addEventListener("click", () => { if (state.read.has(item.id)) state.read.delete(item.id); else state.read.add(item.id); localStorage.setItem("sinovac-read", JSON.stringify([...state.read])); render(); });
+    card.querySelector(".title-button").addEventListener("click", markRead);
+    card.querySelector(".copy-action").addEventListener("click", async () => { await copyText(item.url); showToast("完整链接已复制"); });
+  });
+}
+
+function setActiveView() { document.querySelectorAll(".view-tab").forEach(b => b.classList.toggle("active", b.dataset.view === state.view)); }
+function resetFilters() {
+  Object.assign(state, {category:"all",status:"all",priority:"all",topic:"all",query:"",view:"all"});
+  els.statusFilter.value = "all"; els.priorityFilter.value = "all"; els.topicFilter.value = "all"; els.searchInput.value = ""; setActiveView(); render();
+}
+function exportBrief() {
+  const items = filteredNews();
+  const text = [`科兴品牌情报日报（示例）｜${state.date}`, `共 ${items.length} 条`, "", ...items.flatMap((n,i) => [`${i+1}. 【${n.status}｜${n.priority}｜${n.category}】${n.title}`, `事实：${n.fact}`, `品牌部关注/行动建议：${n.action}`, `来源：${n.source}`, n.url, ""])].join("\n");
+  copyText(text).then(() => showToast(`已复制 ${items.length} 条情报`));
+}
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); }
+  catch { const t = document.createElement("textarea"); t.value = text; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); }
+}
+let toastTimer;
+function showToast(message) { clearTimeout(toastTimer); els.toast.textContent = message; els.toast.classList.add("show"); toastTimer = setTimeout(() => els.toast.classList.remove("show"), 1800); }
+
+init();
+</script>
+</body>
+</html>
