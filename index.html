@@ -1,562 +1,69 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#f4f7f4" />
-  <title>科兴品牌情报看板</title>
-  <style>:root {
-  --ink: #18251f;
-  --muted: #6d7a73;
-  --line: #dfe6e1;
-  --paper: #ffffff;
-  --canvas: #f3f6f3;
-  --green: #006c50;
-  --green-dark: #07533f;
-  --green-soft: #e7f3ee;
-  --blue: #1b5fbf;
-  --blue-soft: #eaf1fb;
-  --amber: #a66212;
-  --amber-soft: #fff3df;
-  --red: #b83a32;
-  --red-soft: #fcecea;
-  --shadow: 0 18px 44px rgba(27, 51, 41, 0.08);
-  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-  color: var(--ink);
-  background: var(--canvas);
-}
-
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--canvas); }
-button, input, select { font: inherit; }
-button { color: inherit; }
-
-.app-shell { display: grid; grid-template-columns: 252px minmax(0, 1fr); min-height: 100vh; }
-.sidebar { position: sticky; top: 0; height: 100vh; padding: 30px 20px 22px; color: #eef8f3; background: linear-gradient(165deg, #092c23 0%, #0a3d2f 52%, #0a4c39 100%); display: flex; flex-direction: column; }
-.brand-block { display: flex; align-items: center; gap: 12px; padding: 0 8px 28px; border-bottom: 1px solid rgba(255,255,255,.12); }
-.brand-block strong { display: block; font-size: 16px; letter-spacing: .02em; }
-.brand-block small { display: block; margin-top: 4px; color: #9bb8ad; font-size: 9px; letter-spacing: .14em; }
-.brand-mark { position: relative; width: 34px; height: 34px; flex: 0 0 34px; border: 1px solid rgba(255,255,255,.25); border-radius: 11px; overflow: hidden; }
-.brand-mark span { position: absolute; width: 22px; height: 6px; border-radius: 8px; transform: rotate(-38deg); background: #80d4aa; }
-.brand-mark span:nth-child(1) { left: -3px; top: 5px; }
-.brand-mark span:nth-child(2) { left: 7px; top: 14px; background: #d8f4e6; }
-.brand-mark span:nth-child(3) { left: 17px; top: 23px; background: #45a877; }
-.category-nav { display: grid; gap: 7px; padding: 28px 0; overflow-y: auto; }
-.category-button { width: 100%; display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 10px; padding: 11px 12px; border: 0; border-radius: 10px; color: #b9d0c7; background: transparent; text-align: left; cursor: pointer; transition: .18s ease; }
-.category-button:hover { color: #fff; background: rgba(255,255,255,.07); }
-.category-button.active { color: #fff; background: rgba(255,255,255,.13); box-shadow: inset 3px 0 #77d2a6; }
-.category-icon { font-size: 15px; filter: saturate(.8); }
-.nav-count { min-width: 24px; padding: 2px 7px; border-radius: 999px; font-size: 11px; text-align: center; color: #c8ddd5; background: rgba(255,255,255,.1); }
-.category-button.active .nav-count { color: #0c4a37; background: #a5dfc1; }
-.sidebar-note { margin-top: auto; padding: 14px; display: flex; gap: 10px; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; background: rgba(255,255,255,.06); }
-.pulse-dot { width: 8px; height: 8px; margin-top: 4px; border-radius: 50%; background: #71d39f; box-shadow: 0 0 0 4px rgba(113,211,159,.1); }
-.sidebar-note strong, .sidebar-note small { display: block; }
-.sidebar-note strong { font-size: 12px; }
-.sidebar-note small { margin-top: 5px; font-size: 10px; color: #9db9ae; line-height: 1.4; }
-.sidebar-footer { padding: 16px 4px 0; color: #779b8e; font-size: 9px; letter-spacing: .14em; }
-
-.main-content { min-width: 0; padding: 42px clamp(24px, 4.5vw, 68px) 68px; }
-.topbar { display: flex; align-items: flex-end; justify-content: space-between; gap: 28px; margin: 0 auto 26px; max-width: 1500px; }
-.eyebrow { color: var(--green); font-size: 10px; font-weight: 750; letter-spacing: .16em; }
-h1 { margin: 9px 0 5px; font-size: clamp(26px, 3.2vw, 42px); line-height: 1.13; letter-spacing: -.04em; }
-.date-range { margin: 0; color: var(--muted); font-size: 13px; }
-.top-actions { display: flex; align-items: flex-end; gap: 10px; }
-.date-control, .filter-select { display: flex; flex-direction: column; gap: 6px; color: var(--muted); font-size: 11px; }
-.date-control select, .filter-select select { min-width: 140px; height: 42px; padding: 0 34px 0 12px; color: var(--ink); border: 1px solid var(--line); border-radius: 9px; outline: none; background: var(--paper); }
-.button { height: 42px; padding: 0 16px; border: 1px solid transparent; border-radius: 9px; font-size: 12px; font-weight: 650; cursor: pointer; transition: .18s ease; white-space: nowrap; }
-.button.secondary { color: #fff; background: var(--green); }
-.button.secondary:hover { background: var(--green-dark); transform: translateY(-1px); }
-.button.ghost { border-color: var(--line); background: #fff; }
-.button.ghost:hover { border-color: #b7c7bf; }
-
-.decision-grid { display: grid; grid-template-columns: 1.25fr 1fr 1fr 1fr; gap: 12px; margin: 0 auto 18px; max-width: 1500px; }
-.decision-card { min-height: 146px; padding: 18px 20px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.78); box-shadow: 0 8px 20px rgba(24,48,37,.03); }
-.decision-card.primary { color: #fff; border-color: #0a6049; background: linear-gradient(145deg, #07563f 0%, #0d7a5a 100%); box-shadow: 0 16px 30px rgba(0,93,69,.18); }
-.decision-label { color: var(--muted); font-size: 10px; font-weight: 750; letter-spacing: .12em; }
-.primary .decision-label { color: #b8dfcf; }
-.metric-row { display: flex; align-items: baseline; gap: 8px; margin-top: 12px; }
-.metric-row strong { font-size: 30px; line-height: 1; letter-spacing: -.04em; }
-.metric-row span { color: var(--muted); font-size: 12px; }
-.primary .metric-row span { color: #d2ebe1; }
-.decision-card p { margin: 13px 0 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
-.primary p { color: #d9eee6; }
-.text-button { padding: 11px 0 0; border: 0; color: var(--green); background: transparent; font-size: 11px; font-weight: 700; cursor: pointer; }
-
-.workspace-panel { max-width: 1500px; margin: 0 auto; border: 1px solid var(--line); border-radius: 16px; background: var(--paper); box-shadow: var(--shadow); overflow: hidden; }
-.workspace-header { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 22px 24px 17px; }
-.workspace-title-row { display: flex; align-items: center; gap: 10px; }
-.workspace-header h2 { margin: 0; font-size: 18px; letter-spacing: -.02em; }
-.workspace-header p { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
-.result-count { padding: 3px 8px; border-radius: 999px; color: var(--green); background: var(--green-soft); font-size: 10px; font-weight: 700; }
-.view-switch { display: flex; padding: 3px; border-radius: 9px; background: #f0f3f1; }
-.view-tab { padding: 7px 12px; border: 0; border-radius: 7px; color: var(--muted); background: transparent; font-size: 11px; cursor: pointer; }
-.view-tab.active { color: var(--ink); background: #fff; box-shadow: 0 2px 8px rgba(32,55,44,.08); font-weight: 700; }
-.filters { display: grid; grid-template-columns: minmax(260px, 1fr) repeat(3, auto) auto; align-items: end; gap: 9px; padding: 0 24px 18px; }
-.search-box { position: relative; }
-.search-box svg { position: absolute; left: 12px; top: 13px; width: 16px; fill: none; stroke: #718078; stroke-width: 1.7; stroke-linecap: round; }
-.search-box input { width: 100%; height: 42px; padding: 0 14px 0 37px; border: 1px solid var(--line); border-radius: 9px; outline: none; }
-.search-box input:focus, select:focus { border-color: #66a892; box-shadow: 0 0 0 3px rgba(0,108,80,.08); }
-.filter-select select { min-width: 112px; }
-.quality-strip { display: flex; align-items: center; gap: 18px; min-height: 42px; padding: 0 24px; border-top: 1px solid #edf1ee; border-bottom: 1px solid #edf1ee; color: var(--muted); background: #fafcfa; font-size: 10px; }
-.quality-strip span { display: flex; align-items: center; gap: 6px; }
-.quality-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; }
-.quality-dot.green { background: #2d9b68; }.quality-dot.blue { background: #4f7ec5; }.quality-dot.amber { background: #d18a30; }
-.demo-badge { margin-left: auto; padding: 4px 7px; border: 1px solid #e3cda9; border-radius: 5px; color: #8b5e1f; background: #fff9ed; font-weight: 750; letter-spacing: .08em; }
-.feed { padding: 6px 24px 18px; }
-.news-card { display: grid; grid-template-columns: 96px minmax(0,1fr) 132px; gap: 18px; padding: 23px 2px; border-bottom: 1px solid #e9eeeb; }
-.news-card:last-child { border-bottom: 0; }
-.card-meta { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; }
-.priority { min-width: 34px; padding: 3px 7px; border-radius: 5px; font-size: 9px; font-weight: 800; text-align: center; }
-.priority.high { color: var(--red); background: var(--red-soft); }.priority.mid-high { color: var(--amber); background: var(--amber-soft); }.priority.mid { color: var(--blue); background: var(--blue-soft); }
-.status-badge { font-size: 10px; font-weight: 800; letter-spacing: .06em; }
-.status-badge.NEW { color: var(--green); }.status-badge.UPDATE { color: var(--blue); }
-.time { color: #8a958f; font-size: 10px; }
-.card-body { min-width: 0; }
-.tag-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
-.topic-tag { padding: 3px 7px; border-radius: 4px; color: #66736c; background: #f1f4f2; font-size: 9px; }
-.merge-tag { color: #6f4b12; background: #fff4df; }
-.card-title { margin: 0; font-size: 16px; line-height: 1.45; letter-spacing: -.01em; }
-.card-title button { padding: 0; border: 0; color: inherit; background: transparent; font-weight: 750; text-align: left; cursor: pointer; }
-.card-title button:hover { color: var(--green); }
-.summary-block { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 13px; }
-.fact, .action { position: relative; margin: 0; padding-left: 48px; color: #4e5d55; font-size: 12px; line-height: 1.7; }
-.fact::before, .action::before { position: absolute; left: 0; top: 2px; width: 36px; color: #829087; font-size: 9px; font-weight: 800; letter-spacing: .06em; }
-.fact::before { content: "事实"; }.action::before { content: "行动"; }
-.action { padding-top: 8px; padding-bottom: 8px; padding-right: 12px; border-radius: 7px; color: #244c3c; background: #f0f7f4; }
-.action::before { top: 10px; color: var(--green); }
-.source-line { margin-top: 13px; padding-top: 12px; border-top: 1px dashed #e0e7e3; }
-.source-name { color: #506158; font-size: 10px; font-weight: 700; }
-.bare-link { display: block; margin-top: 4px; color: #547066; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10px; line-height: 1.4; text-decoration: none; overflow-wrap: anywhere; }
-.bare-link:hover { color: var(--green); text-decoration: underline; }
-.merged-sources { margin: 10px 0 0; padding: 9px 12px; border-radius: 7px; background: #f8faf8; }
-.merged-sources summary { color: #53635b; font-size: 10px; font-weight: 700; cursor: pointer; }
-.merged-sources ul { margin: 9px 0 0; padding-left: 16px; color: var(--muted); font-size: 10px; line-height: 1.7; }
-.card-actions { display: flex; flex-direction: column; align-items: stretch; gap: 7px; }
-.card-action { min-height: 34px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; color: #56655d; background: #fff; font-size: 10px; font-weight: 650; cursor: pointer; }
-.card-action:hover { border-color: #a6bbb1; color: var(--green); }
-.card-action.active { border-color: #8bc0ac; color: var(--green); background: var(--green-soft); }
-.empty-state { padding: 70px 20px 78px; text-align: center; color: var(--ink); }
-.empty-state div { font-weight: 750; }.empty-state p { margin: 8px 0 18px; color: var(--muted); font-size: 12px; }
-.toast { position: fixed; left: 50%; bottom: 28px; z-index: 10; transform: translate(-50%, 20px); padding: 10px 16px; border-radius: 8px; color: #fff; background: #173d30; box-shadow: 0 12px 30px rgba(0,0,0,.16); font-size: 11px; opacity: 0; pointer-events: none; transition: .24s ease; }
-.toast.show { opacity: 1; transform: translate(-50%, 0); }
-
-@media (max-width: 1100px) {
-  .decision-grid { grid-template-columns: repeat(2, 1fr); }
-  .filters { grid-template-columns: 1fr repeat(2, auto); }
-  .search-box { grid-column: 1 / -1; }
-  .filter-select:nth-of-type(4) { display: none; }
-}
-@media (max-width: 800px) {
-  .app-shell { display: block; }
-  .sidebar { position: static; width: auto; height: auto; padding: 18px; }
-  .brand-block { padding-bottom: 16px; }
-  .category-nav { display: flex; padding: 14px 0 0; overflow-x: auto; }
-  .category-button { grid-template-columns: auto auto; width: auto; min-width: max-content; padding: 9px 11px; }
-  .category-icon, .sidebar-note, .sidebar-footer { display: none; }
-  .main-content { padding: 24px 14px 44px; }
-  .topbar { align-items: flex-start; flex-direction: column; }
-  .top-actions { width: 100%; }
-  .date-control { flex: 1; }.date-control select { width: 100%; }
-  .decision-grid { grid-template-columns: 1fr 1fr; }
-  .workspace-header { align-items: flex-start; flex-direction: column; }
-  .filters { grid-template-columns: 1fr 1fr; }
-  .search-box { grid-column: 1 / -1; }
-  .filter-select select { width: 100%; min-width: 0; }
-  .quality-strip { overflow-x: auto; white-space: nowrap; }
-  .news-card { grid-template-columns: 70px minmax(0,1fr); }
-  .card-actions { grid-column: 2; flex-direction: row; }
-  .card-action { flex: 1; }
-}
-@media (max-width: 560px) {
-  .decision-grid { grid-template-columns: 1fr; }
-  .decision-card { min-height: 126px; }
-  .top-actions { align-items: stretch; flex-direction: column; }
-  .filters { grid-template-columns: 1fr; }
-  .search-box { grid-column: auto; }
-  .news-card { grid-template-columns: 1fr; gap: 10px; }
-  .card-meta { flex-direction: row; align-items: center; }
-  .card-actions { grid-column: auto; }
-  .fact, .action { padding-left: 42px; }
-}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f3f7f4">
+  <title>科兴品牌情报看板｜2026-09-20</title>
+  <style>
+    :root{--green:#086447;--green2:#0b805b;--ink:#17231e;--muted:#64726c;--line:#dce7e1;--bg:#f3f7f4;--card:#fff;--red:#be3636;--orange:#c86612;--blue:#2563a8;--shadow:0 10px 34px rgba(16,55,41,.08)}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.62}
+    .top{background:linear-gradient(125deg,#073f31,#0a7654 62%,#14956b);color:#fff;padding:34px max(22px,calc((100vw - 1180px)/2));position:relative;overflow:hidden}.top:after{content:"";position:absolute;width:340px;height:340px;border:70px solid rgba(255,255,255,.06);border-radius:50%;right:-90px;top:-180px}.eyebrow{letter-spacing:.16em;font-size:12px;opacity:.75}.top h1{font-size:clamp(28px,4vw,46px);margin:8px 0 2px}.top p{margin:4px 0;opacity:.86}.wrap{max-width:1180px;margin:auto;padding:22px}.notice{background:#fff8e8;border:1px solid #f0d99d;border-radius:14px;padding:13px 16px;color:#72520c;margin-bottom:18px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.stat{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:16px;box-shadow:var(--shadow)}.stat b{display:block;font-size:28px;color:var(--green)}.stat span{font-size:13px;color:var(--muted)}
+    .toolbar{background:#fff;border:1px solid var(--line);border-radius:16px;padding:15px;display:grid;grid-template-columns:1.25fr repeat(3,.8fr) auto;gap:10px;position:sticky;top:8px;z-index:5;box-shadow:var(--shadow)}input,select,button{font:inherit;border-radius:10px;border:1px solid #cad8d1;background:#fff;padding:10px 12px;color:var(--ink)}button{cursor:pointer}button.primary{background:var(--green);color:#fff;border-color:var(--green)}button:hover{filter:brightness(.98)}
+    .section-head{display:flex;align-items:end;justify-content:space-between;margin:30px 0 12px}.section-head h2{margin:0;font-size:23px}.section-head span{font-size:13px;color:var(--muted)}
+    .cards{display:grid;gap:15px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:var(--shadow)}.card.read{opacity:.66}.card-top{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.tag{font-size:12px;font-weight:700;padding:4px 9px;border-radius:999px;background:#eef5f1;color:var(--green)}.tag.high{background:#fff0ee;color:var(--red)}.tag.midhigh{background:#fff5e7;color:var(--orange)}.tag.new{background:#e9f6ff;color:var(--blue)}.tag.update{background:#f2ecff;color:#6946a5}.date{margin-left:auto;color:var(--muted);font-size:12px}.card h3{font-size:20px;line-height:1.42;margin:12px 0}.label{font-weight:750;color:#34473e}.card p{margin:8px 0}.source{margin-top:13px;padding-top:12px;border-top:1px dashed var(--line);font-size:13px}.url{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-all;color:#176a50}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.actions button{font-size:13px;padding:7px 10px}.empty{background:#f8faf9;border:1px dashed #bccdc4;border-radius:14px;padding:15px;color:var(--muted)}
+    details{background:#fff;border:1px solid var(--line);border-radius:16px;margin:14px 0;box-shadow:var(--shadow)}summary{cursor:pointer;padding:17px 20px;font-weight:800}.report{padding:0 20px 20px}.report h3{color:var(--green);margin:20px 0 8px}.report ol,.report ul{padding-left:22px}.report li{margin:7px 0}.five{border-left:3px solid #86b7a5;padding-left:14px;margin:15px 0}.five p{margin:5px 0}.footer{color:var(--muted);font-size:12px;text-align:center;padding:34px 8px}.hidden{display:none!important}.watching{border-color:#d7b457;box-shadow:0 0 0 2px #fff1bd, var(--shadow)}
+    @media(max-width:780px){.stats{grid-template-columns:repeat(2,1fr)}.toolbar{grid-template-columns:1fr 1fr}.toolbar input{grid-column:1/-1}.top{padding:28px 22px}.date{margin-left:0;width:100%}.card{padding:16px}}
+    @media print{.toolbar,.actions{display:none}.top{background:#fff;color:#111;padding:12px 0}.wrap{padding:0}.card,details,.stat{box-shadow:none;break-inside:avoid}body{background:#fff}}
+  </style>
 </head>
 <body>
-  <div class="app-shell">
-    <aside class="sidebar" aria-label="情报栏目">
-      <div class="brand-block">
-        <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
-        <div>
-          <strong>科兴品牌情报</strong>
-          <small>INTERNAL WORKSPACE</small>
-        </div>
-      </div>
-
-      <nav id="categoryNav" class="category-nav"></nav>
-
-      <div class="sidebar-note">
-        <span class="pulse-dot"></span>
-        <div>
-          <strong>日报规则已接入</strong>
-          <small>工作日 08:00 · Asia/Shanghai</small>
-        </div>
-      </div>
-      <div class="sidebar-footer">PRIVATE · OWNER ONLY</div>
-    </aside>
-
-    <main class="main-content">
-      <header class="topbar">
-        <div>
-          <div class="eyebrow">BRAND INTELLIGENCE / DAILY DESK</div>
-          <h1>今天最需要关注什么？</h1>
-          <p id="dateRangeText" class="date-range"></p>
-        </div>
-        <div class="top-actions">
-          <label class="date-control">
-            <span>日报日期</span>
-            <select id="dateFilter" aria-label="选择日报日期"></select>
-          </label>
-          <button id="exportButton" class="button secondary" type="button">复制当日简报</button>
-        </div>
-      </header>
-
-      <section class="decision-grid" aria-label="今日决策摘要">
-        <article class="decision-card primary">
-          <div class="decision-label">优先处置</div>
-          <div class="metric-row"><strong id="highCount">0</strong><span>条高优情报</span></div>
-          <p id="highSummary">筛选后暂无高优情报</p>
-        </article>
-        <article class="decision-card">
-          <div class="decision-label">有效更新</div>
-          <div class="metric-row"><strong id="updateCount">0</strong><span>条 UPDATE</span></div>
-          <p>仅保留出现新数字、新阶段、新政策或新影响的事项</p>
-        </article>
-        <article class="decision-card">
-          <div class="decision-label">去重质检</div>
-          <div class="metric-row"><strong id="dedupeCount">0</strong><span>条已归并</span></div>
-          <p>同类开打新闻合并；跨专题内容只保留一个主归属</p>
-        </article>
-        <article class="decision-card watch-card">
-          <div class="decision-label">我的盯防</div>
-          <div class="metric-row"><strong id="watchCount">0</strong><span>条进行中</span></div>
-          <button id="showWatchButton" class="text-button" type="button">只看已盯防 →</button>
-        </article>
-      </section>
-
-      <section class="workspace-panel">
-        <div class="workspace-header">
-          <div>
-            <div class="workspace-title-row">
-              <h2 id="viewTitle">全部情报</h2>
-              <span id="resultCount" class="result-count">0 条</span>
-            </div>
-            <p>示例数据用于验证交互；结构与质检逻辑来自现行日报规则。</p>
-          </div>
-          <div class="view-switch" role="group" aria-label="工作视图">
-            <button class="view-tab active" data-view="all" type="button">全部</button>
-            <button class="view-tab" data-view="unread" type="button">未读</button>
-            <button class="view-tab" data-view="watch" type="button">盯防</button>
-          </div>
-        </div>
-
-        <div class="filters" aria-label="筛选器">
-          <label class="search-box">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.3-4.3m2.3-5.2a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"/></svg>
-            <input id="searchInput" type="search" placeholder="搜索标题、事实、行动建议或来源" />
-          </label>
-          <label class="filter-select"><span>状态</span><select id="statusFilter"><option value="all">全部</option><option value="NEW">NEW</option><option value="UPDATE">UPDATE</option></select></label>
-          <label class="filter-select"><span>重要性</span><select id="priorityFilter"><option value="all">全部</option><option value="高">高</option><option value="中高">中高</option><option value="中">中</option></select></label>
-          <label class="filter-select"><span>专题</span><select id="topicFilter"><option value="all">全部专题</option></select></label>
-          <button id="resetFilters" class="button ghost" type="button">清除筛选</button>
-        </div>
-
-        <div class="quality-strip">
-          <span><i class="quality-dot green"></i>原始链接已保留</span>
-          <span><i class="quality-dot blue"></i>专题与热点单一归属</span>
-          <span><i class="quality-dot amber"></i>历史上下文不计入 NEW</span>
-          <span class="demo-badge">DEMO DATA</span>
-        </div>
-
-        <div id="feed" class="feed" aria-live="polite"></div>
-        <div id="emptyState" class="empty-state" hidden>
-          <div>没有符合当前条件的情报</div>
-          <p>可以清除部分筛选，或切换日期查看。</p>
-          <button class="button secondary" type="button" data-reset>清除筛选</button>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script>const categories = [
-  { id: "all", label: "全部情报", icon: "◫" },
-  { id: "行业动态", label: "行业动态", icon: "▦" },
-  { id: "竞品动态", label: "竞品动态", icon: "◎" },
-  { id: "热点新闻", label: "热点新闻", icon: "↗" },
-  { id: "全球疫情雷达", label: "全球疫情雷达", icon: "◉" },
-  { id: "流感专题", label: "流感专题", icon: "✦" },
-  { id: "其他重点产品", label: "其他重点产品", icon: "＋" }
-];
-
-const news = [
-  {
-    id: "n-0918-01", date: "2026-09-18", time: "06:48", category: "流感专题", status: "UPDATE", priority: "高",
-    title: "多地进入流感疫苗集中开打阶段，免费与自费接种同步推进",
-    topics: ["流感", "各地开打", "重点人群"], merged: 6,
-    fact: "【示例】北京、浙江、深圳、山东等地在同一监测窗口出现开打或采购进展，已按“同类事实合并”规则汇总为一条；其中新增信息集中在接种点扩容、免费人群范围与预约方式。",
-    action: "按省份形成“已进场—待进场—可补位”清单，与招采节奏联动；优先准备儿童、老年人和慢病人群的终端沟通素材。",
-    source: "多地疾控与卫健部门（示例汇总）", url: "https://example.com/demo/influenza-rollout-2026-09-18",
-    mergedSources: ["北京市：重点人群免费接种启动（示例）", "浙江省：接种点服务扩容（示例）", "深圳市：预约接种安排更新（示例）", "山东省：重点人群项目进展（示例）"]
-  },
-  {
-    id: "n-0918-02", date: "2026-09-18", time: "06:32", category: "竞品动态", status: "NEW", priority: "高",
-    title: "主要流感疫苗企业渠道动作进入密集期，终端资源竞争升温",
-    topics: ["流感", "竞品", "渠道"],
-    fact: "【示例】中生、华兰、赛诺菲、智飞等重点竞品在区域准入、学术推广或终端覆盖上出现新增动作，市场从单一价格竞争转向供货能力与接种动员效率竞争。",
-    action: "建立竞品“省份—产品—价格—渠道动作”对照表；对儿童主力市场单独跟踪终端可及性与家长决策内容。",
-    source: "企业与区域采购公开信息（示例）", url: "https://example.com/demo/competitor-tracker-2026-09-18"
-  },
-  {
-    id: "n-0918-03", date: "2026-09-18", time: "05:56", category: "全球疫情雷达", status: "UPDATE", priority: "中高",
-    title: "南半球流感活动进入季末观察期，老年重症负担仍需持续跟踪",
-    topics: ["南半球", "老年人", "重症"],
-    fact: "【示例】近期海外监测提示总体活动趋缓，但老年人住院与重症指标仍有滞后，部分地区继续强调高风险人群的疫苗与抗病毒干预。",
-    action: "回查各国卫生部门原始周报，重点提取60岁以上住院、ICU及毒株变化数据，为国内高风险人群传播提供证据线索。",
-    source: "海外卫生部门周报（示例）", url: "https://example.com/demo/global-flu-radar-2026-09-18"
-  },
-  {
-    id: "n-0918-04", date: "2026-09-18", time: "05:20", category: "行业动态", status: "NEW", priority: "中高",
-    title: "多地推进二级医疗机构预防接种服务，疫苗可及性出现新入口",
-    topics: ["接种服务", "二级医疗机构", "政策"],
-    fact: "【示例】部分地区继续探索在二级医疗机构开展成人及重点人群预防接种服务，服务场景从传统接种门诊向临床科室协同延伸。",
-    action: "关注准入标准、收费方式及院内推荐路径；提前形成慢病门诊、老年医学和妇幼场景的合规沟通工具。",
-    source: "地方卫健部门（示例）", url: "https://example.com/demo/hospital-vaccination-2026-09-18"
-  },
-  {
-    id: "n-0918-05", date: "2026-09-18", time: "04:35", category: "其他重点产品", status: "NEW", priority: "中高",
-    title: "托幼机构手足口病防控进入秋季重点窗口，EV71风险教育需求上升",
-    topics: ["手足口", "EV71", "儿童"],
-    fact: "【示例】多地面向托幼机构发布秋季传染病防控提示，强调晨检、病例隔离和环境消毒；家长端对重症风险与疫苗保护范围的认知仍较碎片化。",
-    action: "将EV71疫苗传播从泛疾病科普收紧到“重症风险—适龄窗口—两剂程序”，并为未来多价产品教育保留承接空间。",
-    source: "地方疾控中心（示例）", url: "https://example.com/demo/ev71-autumn-2026-09-18"
-  },
-  {
-    id: "n-0918-06", date: "2026-09-18", time: "03:44", category: "热点新闻", status: "NEW", priority: "中",
-    title: "社交平台“疫苗成分”讨论升温，碎片化信息放大接种犹豫",
-    topics: ["舆情", "成分", "疫苗犹豫"],
-    fact: "【示例】围绕防腐剂、过敏与不良反应的讨论出现扩散，部分高互动内容混淆不同疫苗类型与适用人群，评论区呈现明显求证需求。",
-    action: "不直接卷入个别争论；用医生共创内容集中回答真实决策问题，并对明显错误信息建立快速反馈与分级回应机制。",
-    source: "公开社交平台监测（示例）", url: "https://example.com/demo/social-listening-2026-09-18"
-  },
-  {
-    id: "n-0917-01", date: "2026-09-17", time: "06:52", category: "其他重点产品", status: "NEW", priority: "高",
-    title: "无血清狂犬病疫苗出现新增市场进展，技术路线关注度提升",
-    topics: ["狂犬病", "技术路线", "新品"],
-    fact: "【示例】国内狂犬病疫苗市场出现新的产品或商业化进展，“无血清培养”等技术标签带动行业与公众关注。",
-    action: "区分技术概念、临床价值与传播卖点，持续跟踪批签发、终端覆盖及竞品教育话术，避免仅凭技术标签判断市场影响。",
-    source: "企业公开信息（示例）", url: "https://example.com/demo/rabies-market-2026-09-17"
-  },
-  {
-    id: "n-0917-02", date: "2026-09-17", time: "06:10", category: "流感专题", status: "NEW", priority: "高",
-    title: "校园流感聚集性事件受到关注，接种窗口与家庭决策讨论同步上升",
-    topics: ["流感", "校园", "热点"], merged: 4,
-    fact: "【示例】上海、杭州等地校园流感相关讨论在监测窗口内集中出现，已将地区新闻和热点舆情合并为一条，避免在“热点新闻”重复展示。",
-    action: "把传播重点放在症状识别、缺课管理、家庭防护与尽早接种的完整链路；关注停课、重症或政策变化是否触发舆情升级。",
-    source: "地方媒体与疾控信息（示例汇总）", url: "https://example.com/demo/campus-flu-2026-09-17",
-    mergedSources: ["上海校园健康提示（示例）", "杭州聚集性疫情报道（示例）", "地方疾控防控建议（示例）"]
-  },
-  {
-    id: "n-0917-03", date: "2026-09-17", time: "05:08", category: "行业动态", status: "UPDATE", priority: "中高",
-    title: "多省公费流感疫苗采购进入新阶段，区域执行差异进一步显现",
-    topics: ["公费采购", "招采", "省份"],
-    fact: "【示例】部分省份从采购意向进入评审、结果公示或配送准备阶段；不同地区在抽签、分包和供应保障机制上存在差异。",
-    action: "只把出现新阶段的省份计为UPDATE；同步维护关键节点日历，避免旧采购公告因再次传播而被误判为NEW。",
-    source: "省级采购平台（示例）", url: "https://example.com/demo/public-procurement-2026-09-17"
-  },
-  {
-    id: "n-0917-04", date: "2026-09-17", time: "04:26", category: "全球疫情雷达", status: "NEW", priority: "中",
-    title: "海外水痘暴发线索增加，学校与免疫空白人群成为监测重点",
-    topics: ["水痘", "学校", "海外"],
-    fact: "【示例】高召回线索池发现部分国家学校场景的水痘活动，原始官方通报仍需逐条回查后再判断是否进入正式日报。",
-    action: "列入线索池，不直接上升为高风险判断；核验病例规模、时间窗口、免疫史和官方风险等级。",
-    source: "全球传染病动态线索池（示例）", url: "https://example.com/demo/varicella-signal-2026-09-17"
-  },
-  {
-    id: "n-0916-01", date: "2026-09-16", time: "06:42", category: "竞品动态", status: "UPDATE", priority: "高",
-    title: "流感疫苗市场价格与供货策略分化，省级竞争格局进入重排期",
-    topics: ["流感", "价格", "供货"],
-    fact: "【示例】重点企业在不同省份呈现差异化报价、供货和渠道组合，单纯比较中标价格不足以判断真实竞争强度。",
-    action: "将份额、配送能力、首批到货和终端动销纳入同一评估框架，区分“中标”与“真正打下去”。",
-    source: "公开招采与渠道信息（示例）", url: "https://example.com/demo/flu-market-2026-09-16"
-  },
-  {
-    id: "n-0916-02", date: "2026-09-16", time: "05:55", category: "其他重点产品", status: "NEW", priority: "中高",
-    title: "秋季犬伤门诊就诊提示增多，狂犬病暴露后处置认知仍有缺口",
-    topics: ["狂犬病", "犬伤", "暴露后处置"],
-    fact: "【示例】多地健康提示强调暴露后及时规范处置，但公众对伤口冲洗、分级和疫苗程序仍存在常见误区。",
-    action: "用场景化问答覆盖“是否需要打、去哪里打、如何按程序完成”，同时监测疫苗供应与门诊服务舆情。",
-    source: "地方疾控与犬伤门诊（示例）", url: "https://example.com/demo/rabies-pep-2026-09-16"
-  }
-];
-
-const state = {
-  date: "2026-09-18",
-  category: "all",
-  status: "all",
-  priority: "all",
-  topic: "all",
-  query: "",
-  view: "all",
-  watched: new Set(JSON.parse(localStorage.getItem("sinovac-watch") || "[]")),
-  read: new Set(JSON.parse(localStorage.getItem("sinovac-read") || "[]"))
-};
-
-const els = Object.fromEntries(["categoryNav","dateFilter","dateRangeText","statusFilter","priorityFilter","topicFilter","searchInput","resetFilters","feed","emptyState","viewTitle","resultCount","highCount","updateCount","dedupeCount","watchCount","highSummary","toast","exportButton","showWatchButton"].map(id => [id, document.getElementById(id)]));
-
-function unique(values) { return [...new Set(values)]; }
-function formatDate(date) {
-  const d = new Date(date + "T00:00:00");
-  return `${d.getMonth()+1}月${d.getDate()}日`;
-}
-function priorityClass(p) { return p === "高" ? "high" : p === "中高" ? "mid-high" : "mid"; }
-function escapeHtml(value) { return String(value).replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c])); }
-
-function init() {
-  const dates = unique(news.map(n => n.date)).sort().reverse();
-  els.dateFilter.innerHTML = dates.map(d => `<option value="${d}">${d} · ${formatDate(d)}</option>`).join("");
-  const topics = unique(news.flatMap(n => n.topics)).sort((a,b) => a.localeCompare(b,"zh-CN"));
-  els.topicFilter.innerHTML += topics.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("");
-  bindEvents();
-  render();
-}
-
-function getBaseForDate() { return news.filter(n => n.date === state.date); }
-function filteredNews() {
-  const q = state.query.toLowerCase();
-  return getBaseForDate().filter(item => {
-    const haystack = [item.title,item.fact,item.action,item.source,...item.topics].join(" ").toLowerCase();
-    return (state.category === "all" || item.category === state.category)
-      && (state.status === "all" || item.status === state.status)
-      && (state.priority === "all" || item.priority === state.priority)
-      && (state.topic === "all" || item.topics.includes(state.topic))
-      && (!q || haystack.includes(q))
-      && (state.view !== "watch" || state.watched.has(item.id))
-      && (state.view !== "unread" || !state.read.has(item.id));
-  }).sort((a,b) => ({"高":3,"中高":2,"中":1}[b.priority] - {"高":3,"中高":2,"中":1}[a.priority]) || b.time.localeCompare(a.time));
-}
-
-function render() {
-  renderNav();
-  const items = filteredNews();
-  const currentCategory = categories.find(c => c.id === state.category)?.label || "全部情报";
-  els.viewTitle.textContent = state.view === "watch" ? "我的盯防" : state.view === "unread" ? "未读情报" : currentCategory;
-  els.resultCount.textContent = `${items.length} 条`;
-  els.dateRangeText.textContent = `${formatDate(state.date)}日报 · 监测窗口 07:00—次日 07:00 · 北京时间`;
-  els.feed.innerHTML = items.map(cardTemplate).join("");
-  els.feed.hidden = !items.length;
-  els.emptyState.hidden = !!items.length;
-  updateMetrics();
-  bindCardActions();
-}
-
-function renderNav() {
-  const base = getBaseForDate();
-  els.categoryNav.innerHTML = categories.map(c => {
-    const count = c.id === "all" ? base.length : base.filter(n => n.category === c.id).length;
-    return `<button class="category-button ${state.category === c.id ? "active" : ""}" data-category="${c.id}" type="button"><span class="category-icon">${c.icon}</span><span>${c.label}</span><span class="nav-count">${count}</span></button>`;
-  }).join("");
-  els.categoryNav.querySelectorAll("button").forEach(button => button.addEventListener("click", () => {
-    state.category = button.dataset.category;
-    state.view = "all";
-    setActiveView();
-    render();
-  }));
-}
-
-function cardTemplate(item) {
-  const watched = state.watched.has(item.id);
-  const read = state.read.has(item.id);
-  return `<article class="news-card" data-id="${item.id}">
-    <div class="card-meta">
-      <span class="priority ${priorityClass(item.priority)}">${item.priority}优</span>
-      <span class="status-badge ${item.status}">${item.status}</span>
-      <span class="time">${item.time}</span>
-    </div>
-    <div class="card-body">
-      <div class="tag-row"><span class="topic-tag">${item.category}</span>${item.topics.map(t => `<span class="topic-tag">${escapeHtml(t)}</span>`).join("")}${item.merged ? `<span class="topic-tag merge-tag">已合并 ${item.merged} 条</span>` : ""}</div>
-      <h3 class="card-title"><button class="title-button" type="button">${escapeHtml(item.title)}</button></h3>
-      <div class="summary-block">
-        <p class="fact">${escapeHtml(item.fact)}</p>
-        <p class="action">${escapeHtml(item.action)}</p>
-      </div>
-      <div class="source-line">
-        <span class="source-name">来源：${escapeHtml(item.source)}</span>
-        <a class="bare-link" href="${item.url}" target="_blank" rel="noreferrer">${item.url}</a>
-        ${item.mergedSources ? `<details class="merged-sources"><summary>查看已归并来源（${item.mergedSources.length}）</summary><ul>${item.mergedSources.map(s => `<li>${escapeHtml(s)}</li>`).join("")}</ul></details>` : ""}
-      </div>
-    </div>
-    <div class="card-actions">
-      <button class="card-action watch-action ${watched ? "active" : ""}" type="button">${watched ? "✓ 已盯防" : "+ 加入盯防"}</button>
-      <button class="card-action read-action ${read ? "active" : ""}" type="button">${read ? "✓ 已阅" : "标记已阅"}</button>
-      <button class="card-action copy-action" type="button">复制链接</button>
-    </div>
-  </article>`;
-}
-
-function updateMetrics() {
-  const base = getBaseForDate();
-  const highs = base.filter(n => n.priority === "高");
-  els.highCount.textContent = highs.length;
-  els.updateCount.textContent = base.filter(n => n.status === "UPDATE").length;
-  els.dedupeCount.textContent = base.reduce((sum,n) => sum + (n.merged ? n.merged - 1 : 0), 0);
-  els.watchCount.textContent = base.filter(n => state.watched.has(n.id)).length;
-  els.highSummary.textContent = highs.length ? highs.slice(0,2).map(n => n.title.replace(/[，。].*/, "")).join("；") : "当日暂无高优情报";
-}
-
-function bindEvents() {
-  els.dateFilter.addEventListener("change", e => { state.date = e.target.value; render(); });
-  els.statusFilter.addEventListener("change", e => { state.status = e.target.value; render(); });
-  els.priorityFilter.addEventListener("change", e => { state.priority = e.target.value; render(); });
-  els.topicFilter.addEventListener("change", e => { state.topic = e.target.value; render(); });
-  els.searchInput.addEventListener("input", e => { state.query = e.target.value.trim(); render(); });
-  els.resetFilters.addEventListener("click", resetFilters);
-  document.querySelector("[data-reset]").addEventListener("click", resetFilters);
-  document.querySelectorAll(".view-tab").forEach(button => button.addEventListener("click", () => { state.view = button.dataset.view; setActiveView(); render(); }));
-  els.showWatchButton.addEventListener("click", () => { state.view = "watch"; setActiveView(); render(); document.querySelector(".workspace-panel").scrollIntoView({behavior:"smooth"}); });
-  els.exportButton.addEventListener("click", exportBrief);
-}
-
-function bindCardActions() {
-  els.feed.querySelectorAll(".news-card").forEach(card => {
-    const item = news.find(n => n.id === card.dataset.id);
-    card.querySelector(".watch-action").addEventListener("click", () => {
-      state.watched.has(item.id) ? state.watched.delete(item.id) : state.watched.add(item.id);
-      localStorage.setItem("sinovac-watch", JSON.stringify([...state.watched])); render(); showToast(state.watched.has(item.id) ? "已加入盯防" : "已移出盯防");
-    });
-    const markRead = () => { state.read.add(item.id); localStorage.setItem("sinovac-read", JSON.stringify([...state.read])); render(); };
-    card.querySelector(".read-action").addEventListener("click", () => { if (state.read.has(item.id)) state.read.delete(item.id); else state.read.add(item.id); localStorage.setItem("sinovac-read", JSON.stringify([...state.read])); render(); });
-    card.querySelector(".title-button").addEventListener("click", markRead);
-    card.querySelector(".copy-action").addEventListener("click", async () => { await copyText(item.url); showToast("完整链接已复制"); });
-  });
-}
-
-function setActiveView() { document.querySelectorAll(".view-tab").forEach(b => b.classList.toggle("active", b.dataset.view === state.view)); }
-function resetFilters() {
-  Object.assign(state, {category:"all",status:"all",priority:"all",topic:"all",query:"",view:"all"});
-  els.statusFilter.value = "all"; els.priorityFilter.value = "all"; els.topicFilter.value = "all"; els.searchInput.value = ""; setActiveView(); render();
-}
-function exportBrief() {
-  const items = filteredNews();
-  const text = [`科兴品牌情报日报（示例）｜${state.date}`, `共 ${items.length} 条`, "", ...items.flatMap((n,i) => [`${i+1}. 【${n.status}｜${n.priority}｜${n.category}】${n.title}`, `事实：${n.fact}`, `品牌部关注/行动建议：${n.action}`, `来源：${n.source}`, n.url, ""])].join("\n");
-  copyText(text).then(() => showToast(`已复制 ${items.length} 条情报`));
-}
-async function copyText(text) {
-  try { await navigator.clipboard.writeText(text); }
-  catch { const t = document.createElement("textarea"); t.value = text; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); }
-}
-let toastTimer;
-function showToast(message) { clearTimeout(toastTimer); els.toast.textContent = message; els.toast.classList.add("show"); toastTimer = setTimeout(() => els.toast.classList.remove("show"), 1800); }
-
-init();
-</script>
+  <header class="top"><div class="eyebrow">SINOVAC BRAND INTELLIGENCE</div><h1>科兴品牌情报看板</h1><p>周末特殊版 · 2026-09-20</p><p>监测窗口：2026-09-18 07:00—2026-09-20 07:00（北京时间）</p></header>
+  <main class="wrap">
+    <div class="notice"><b>质检说明：</b>严格执行时间门禁与去重。本窗口未检出可核实的国内行业、竞品及EV71/水痘/狂犬产品新增，因此未用旧闻补位；香港流感接种计划于9月17日启动，因早于窗口且无新增数据，列为 OLD-CONTEXT，不进入A版。</div>
+    <section class="stats"><div class="stat"><b id="visibleCount">4</b><span>有效情报</span></div><div class="stat"><b>2</b><span>高重要性</span></div><div class="stat"><b>1</b><span>UPDATE</span></div><div class="stat"><b>0</b><span>合并重复项</span></div></section>
+    <section class="toolbar">
+      <input id="q" placeholder="搜索标题、摘要、建议或来源">
+      <select id="topic"><option value="">全部专题</option><option>流感专题</option><option>全球疫情雷达</option><option>行业动态</option><option>竞品动态</option><option>热点新闻</option><option>其他重点产品</option></select>
+      <select id="status"><option value="">NEW / UPDATE</option><option>NEW</option><option>UPDATE</option></select>
+      <select id="importance"><option value="">全部重要性</option><option>高</option><option>中高</option><option>中</option></select>
+      <button class="primary" id="copyBrief">复制当日简报</button>
+    </section>
+    <div class="section-head"><h2>有效情报</h2><span id="resultText">共 4 条</span></div>
+    <section class="cards" id="cards"></section>
+    <div class="section-head"><h2>栏目扫描结果</h2><span>未以旧闻填充</span></div>
+    <section class="cards">
+      <div class="empty"><b>行业动态：</b>本窗口无可核实新增。</div><div class="empty"><b>竞品动态：</b>中生、华兰、赛诺菲、智飞等未发现符合时间门禁且有事实增量的公开信息。</div><div class="empty"><b>热点新闻：</b>加州麻疹交通暴露具有公共热点属性，已归入“全球疫情雷达”并叠加热点标签，避免重复。</div><div class="empty"><b>其他重点产品：</b>EV71/手足口、水痘、狂犬等未发现符合门禁的可核实新增。</div>
+    </section>
+    <div class="section-head"><h2>A版简报</h2><span>固定五项格式</span></div>
+    <details open><summary>展开 / 收起 A版完整简报</summary><div class="report" id="aReport"></div></details>
+    <div class="section-head"><h2>B版深度报告</h2><span>品牌决策视角</span></div>
+    <details open><summary>主题一｜流感季前窗口：低流行不等于低准备</summary><div class="report"><p>美国CDC 9月18日发布的第36周监测显示，季节性流感总体仍处低位，但临床实验室阳性率为1.8%，阳性样本中A型占95.9%。公共卫生实验室完成分型的A型样本以A(H1N1)pdm09为主；本周未报告新型流感人感染新增。对品牌侧而言，当前更适合使用“季前准备”和“重点人群提前保护”框架，而不是制造流行高峰迫近的紧张感。</p><h3>决策含义</h3><ul><li>国内传播可把海外周报作为趋势参照，但必须清楚标注“美国监测”，不可外推为中国流行水平。</li><li>儿童、慢病和老年人仍是最适合提前开展接种教育的三类人群；内容重点应从“是否会感染”转向“降低重症、住院和家庭照护成本”。</li><li>持续盯防中国疾控周报及各地门诊/学校聚集性信息；出现阳性率或学校缺勤率连续上升时，再升级传播强度。</li></ul></div></details>
+    <details open><summary>主题二｜跨境疫情：交通流动与城市暴露成为叙事节点</summary><div class="report"><p>加州一名未接种麻疹患者在公共交通跨越六个县，引发大范围暴露提示；事件与美国麻疹反弹叠加，凸显高流动场景对疫苗可预防疾病传播的放大作用。该议题对科兴的直接产品关联有限，但对“疫苗信任”“旅行健康”“儿童保护”公共沟通具有参照意义。</p><h3>决策含义</h3><ul><li>不介入美国政治争议，聚焦“高传染性疾病+跨区域流动+接种屏障”三点事实。</li><li>如国内出现输入性或校园聚集性事件，可复用“查验接种记录—暴露后咨询—重点人群保护”的实用信息结构。</li></ul></div></details>
+    <details open><summary>主题三｜新发传染病：疫苗适应株与证据边界值得重点观察</summary><div class="report"><p>刚果（金）在本迪布焦型埃博拉疫情中心启动一线人员接种，使用的Ervebo原许可针对扎伊尔型病毒，当前通过同情使用并同步开展对本迪布焦型保护效果研究。与此同时，意大利西尼罗病毒病例超过650例，暖季延长使蚊媒传播季节和地理范围扩大。这两条信息共同指向：面对新发与再发传染病，产品证据边界、现场实施能力和持续监测同样重要。</p><h3>决策含义</h3><ul><li>在对外传播中避免把“已用于应急”直接表述为“已证明对当前毒株有效”。</li><li>海外疫情雷达应增加“病原株—现有疫苗适应范围—使用性质—试验进展”字段。</li><li>蚊媒疾病扩张适合作为全球公共卫生趋势观察，不建议在缺少科兴直接产品关联时做重传播。</li></ul></div></details>
+    <details open><summary>📊 今日品牌部最需要带走的4点</summary><div class="report"><ol><li>流感仍处季前低位，但A型占绝对多数；现阶段传播宜强调提前准备，不宜渲染高峰。</li><li>本窗口没有国内竞品和重点产品硬增量，保持空缺比重复旧闻更有决策价值。</li><li>加州麻疹公共交通暴露说明“跨区域流动”可快速放大疫苗可预防疾病风险，适合作为风险沟通案例。</li><li>刚果（金）埃博拉应急接种提醒品牌传播必须严格区分“获批适应株”“同情使用”和“临床研究中”。</li></ol></div></details>
+    <details open><summary>🚨 风险与盯防</summary><div class="report"><p><b>🔴 高：</b>刚果（金）埃博拉病例及死亡数持续攀升；若出现跨境扩散、试验保护结果或国际机构调整风险等级，立即升级。</p><p><b>🟠 中高：</b>北半球流感季前监测；盯防中国流感阳性率、学校聚集性疫情、儿童门急诊和各省公费采购/到苗。</p><p><b>🟠 中高：</b>美国麻疹反弹与疫苗信任争议；仅在出现官方新增病例或政策变化时UPDATE，避免追逐政治化二手观点。</p><p><b>🟡 中：</b>欧洲西尼罗病毒传播季延长；盯防ECDC/意大利官方周报和邻国本地传播新增。</p><h3>未来72小时重点盯防</h3><ul><li>国内各地流感疫苗到苗、学校接种及免费接种项目的新批次信息，统一归并为“全国接种进度”。</li><li>中生、华兰、赛诺菲、智飞等竞品的招采、供应、价格与渠道动作。</li><li>中国疾控、港澳台卫生部门、CDC/WHO/ECDC的周报或风险评估更新。</li></ul></div></details>
+    <div class="footer">仅基于公开信息形成 · 页面状态（已阅/盯防）仅保存在当前浏览器 · 生成日期 2026-09-20</div>
+  </main>
+  <script>
+  const news=[
+    {id:'flu-cdc-w36',date:'2026-09-18',topic:'流感专题',status:'NEW',importance:'中高',tags:['官方监测','海外'],title:'美国CDC第36周：流感阳性率1.8%，A型占95.9%，未报告新型流感人感染新增',summary:'美国CDC于9月18日发布截至9月12日的第36周流感监测：季节性流感活动总体处于低位；临床实验室检测28,999份样本，514份阳性，阳性率1.8%，其中A型占95.9%。公共卫生实验室完成分型的49份A型样本中，44份为A(H1N1)pdm09、5份为H3N2；本周未报告新型流感病毒人感染新增。',action:'可作为北半球季前趋势参照，支持“趁低位提前接种”的传播节奏；对外必须注明为美国数据，不外推中国。持续盯防中国疾控监测、学校聚集性疫情及儿童门急诊变化。',source:'美国疾病控制与预防中心（CDC）FluView',url:'https://www.cdc.gov/fluview/surveillance/2026-week-36.html'},
+    {id:'ebola-drc-vax',date:'2026-09-19',topic:'全球疫情雷达',status:'UPDATE',importance:'高',tags:['埃博拉','疫苗应急'],title:'刚果（金）疫情中心启动埃博拉一线人员接种，现有疫苗对当前毒株效果仍在研究',summary:'刚果（金）在伊图里省布尼亚和蒙博瓦卢启动一线医护及应急人员接种，计划6—9个月覆盖约2万人。所用Ervebo疫苗获批针对扎伊尔型埃博拉病毒，而当前疫情由本迪布焦型引起，尚无获批疫苗或治疗；此次为同情使用，并配套开展保护效果临床研究。报道援引政府数据称，截至9月19日累计7,541例确诊、3,639例死亡。',action:'列为全球高优先级盯防。对外表述需严格区分“已获批适应株”与“针对当前毒株仍在研究”，避免将应急使用等同于已证实有效；关注试验结果、跨境传播和国际风险等级变化。',source:'Associated Press（美联社）',url:'https://apnews.com/article/ebola-vaccine-congo-bundibugyo-ervebo-3f28becb36c401084cb3b19183edb940'},
+    {id:'measles-california-transit',date:'2026-09-19',topic:'全球疫情雷达',status:'NEW',importance:'高',tags:['热点新闻','麻疹','交通暴露'],title:'加州通报未接种麻疹患者跨六县乘坐公共交通，启动大范围暴露排查',summary:'加州卫生部门警示，一名未接种且感染麻疹的旅客于9月10—12日经铁路和巴士穿越洛杉矶、克恩、圣华金、布特、萨克拉门托和阿拉米达六县，相关车次与站点人员可能暴露。加州正与联邦及地方卫生部门联动通知接触者；报道同时指出，加州今年已在13个县报告59例麻疹病例，其中94%未接种或接种状态不明。',action:'作为“高流动场景放大疫苗可预防疾病风险”的案例储备，关注儿童接种与旅行健康沟通；避免卷入政治化争议，优先引用卫生机构关于接种、暴露后咨询和隔离的实用建议。',source:'The Guardian（引述加州公共卫生部门）',url:'https://www.theguardian.com/us-news/2026/sep/19/california-officials-measles-infected-bus-and-train-passenger'},
+    {id:'west-nile-italy',date:'2026-09-19',topic:'全球疫情雷达',status:'NEW',importance:'中',tags:['西尼罗病毒','蚊媒疾病'],title:'意大利西尼罗病毒感染超650例，暖季延长推动传播季和地理范围扩张',summary:'意大利卫生机构数据显示，2026年以来该国已报告超过650例西尼罗病毒感染，约占欧洲病例的一半。研究人员观察到升温和暖季延长正在扩大蚊媒传播的时间与地域；约80%感染者无症状，少数病例可出现严重神经系统并发症，老年人和基础病人群风险更高。',action:'作为气候变化与蚊媒传染病扩张的趋势信号纳入全球雷达；当前与科兴重点产品直接关联有限，建议监测而非主动放大，等待ECDC或意大利官方周报出现显著新增或跨国扩散。',source:'Associated Press（援引意大利国家卫生研究院等）',url:'https://apnews.com/article/italy-west-nile-virus-health-disease-mosquitoes-infection-88055098d0edba4dee15afbb82a8a791'}
+  ];
+  const esc=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const state=JSON.parse(localStorage.getItem('kexing-20260920')||'{"read":[],"watch":[]}');
+  function save(){localStorage.setItem('kexing-20260920',JSON.stringify(state))}
+  function card(n){const read=state.read.includes(n.id),watch=state.watch.includes(n.id);return `<article class="card ${read?'read':''} ${watch?'watching':''}" data-topic="${n.topic}" data-status="${n.status}" data-importance="${n.importance}" data-search="${esc((n.title+n.summary+n.action+n.source+n.tags.join(' ')).toLowerCase())}"><div class="card-top"><span class="tag ${n.status.toLowerCase()}">${n.status}</span><span class="tag ${n.importance==='高'?'high':n.importance==='中高'?'midhigh':''}">${n.importance}</span><span class="tag">${n.topic}</span>${n.tags.map(t=>`<span class="tag">${t}</span>`).join('')}<span class="date">${n.date}</span></div><h3>${n.title}</h3><p><span class="label">事实摘要：</span>${n.summary}</p><p><span class="label">品牌部关注/行动建议：</span>${n.action}</p><div class="source"><b>来源：</b>${n.source}<br><b>完整裸链接：</b><span class="url">${n.url}</span></div><div class="actions"><button onclick="toggleRead('${n.id}')">${read?'标为未读':'标为已阅'}</button><button onclick="toggleWatch('${n.id}')">${watch?'移出盯防':'加入盯防'}</button><button onclick="copyText('${n.url}')">复制完整链接</button><button onclick="window.open('${n.url}','_blank')">打开来源</button></div></article>`}
+  function aItem(n,i){return `<div class="five"><h3>${i+1}. 【${n.status}｜${n.importance}｜${n.topic}${n.tags.includes('热点新闻')?'｜热点新闻':''}】${n.title}</h3><p><b>新闻事实与重点：</b>${n.summary}</p><p><b>品牌部关注/行动建议：</b>${n.action}</p><p><b>新闻来源：</b>${n.source}</p><p><b>新闻完整裸链接：</b><span class="url">${n.url}</span></p></div>`}
+  function render(){document.querySelector('#cards').innerHTML=news.map(card).join('');document.querySelector('#aReport').innerHTML=news.map(aItem).join('');filter()}
+  function filter(){const q=document.querySelector('#q').value.trim().toLowerCase(),t=document.querySelector('#topic').value,s=document.querySelector('#status').value,im=document.querySelector('#importance').value;let c=0;document.querySelectorAll('#cards .card').forEach(el=>{const ok=(!q||el.dataset.search.includes(q))&&(!t||el.dataset.topic===t)&&(!s||el.dataset.status===s)&&(!im||el.dataset.importance===im);el.classList.toggle('hidden',!ok);if(ok)c++});document.querySelector('#visibleCount').textContent=c;document.querySelector('#resultText').textContent=`共 ${c} 条`}
+  function toggleRead(id){const i=state.read.indexOf(id);i<0?state.read.push(id):state.read.splice(i,1);save();render()}
+  function toggleWatch(id){const i=state.watch.indexOf(id);i<0?state.watch.push(id):state.watch.splice(i,1);save();render()}
+  async function copyText(t){try{await navigator.clipboard.writeText(t)}catch(e){const x=document.createElement('textarea');x.value=t;document.body.appendChild(x);x.select();document.execCommand('copy');x.remove()} }
+  document.querySelectorAll('#q,#topic,#status,#importance').forEach(x=>x.addEventListener('input',filter));document.querySelector('#copyBrief').onclick=()=>copyText(news.map((n,i)=>`${i+1}. 【${n.status}｜${n.importance}｜${n.topic}】${n.title}\n事实摘要：${n.summary}\n品牌部关注/行动建议：${n.action}\n来源：${n.source}\n${n.url}`).join('\n\n'));render();
+  </script>
 </body>
 </html>
