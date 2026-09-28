@@ -518,6 +518,34 @@
         "未来产业"
       ],
       "distance": 20
+    },
+    "international_vaccine_preparedness": {
+      "primary_sources": [
+        "https://www.moh.gov.sg/newsroom/",
+        "https://cepi.net/news",
+        "https://hilleman-labs.org/press-releases/",
+        "https://www.un.org/en/ga/"
+      ],
+      "entities": [
+        "Singapore Ministry of Health",
+        "新加坡卫生部",
+        "Hilleman Laboratories",
+        "MSD",
+        "Wellcome Trust",
+        "CEPI",
+        "GISAID"
+      ],
+      "query_terms": [
+        "mRNA influenza vaccine pilot",
+        "流感mRNA疫苗试点",
+        "outbreak preparedness and response",
+        "pandemic preparedness",
+        "regional vaccine manufacturing",
+        "Bundibugyo ebolavirus vaccine",
+        "technology transfer",
+        "联合国大会 卫生部长 演讲 疫苗"
+      ],
+      "rule": "每日检查官方新闻与演讲栏目，按官方页面发布日期和新加坡/北京时间核验窗口；历史发布只作漏报补录或背景，不把既有合作重复计为新签约/新获批"
     }
   },
   "xingmeng": {
@@ -732,6 +760,16 @@
         "流感疫苗免费接种"
       ],
       "rule": "记录榜单采集时刻与原帖/原文；截稿后线索独立呈现，未核实不计有效情报"
+    },
+    "singapore_unga_speech": {
+      "official_url": "https://www.moh.gov.sg/newsroom/speech-by-mr-ong-ye-kung--minister-for-health-and--coordinating-minister-for-social-policies--at-the-united--nations-general-assembly-side-event-on-outbreak--preparedness-and-response-by-the-ministry-of-health--singapore-and-hilleman-laboratories--23/",
+      "published": "2026-09-24",
+      "monitoring_relevance": [
+        "计划支持mRNA流感疫苗试点",
+        "CEPI/Hilleman Bundibugyo埃博拉候选疫苗临床试验材料",
+        "MSD合资机构与区域产能"
+      ],
+      "handling": "9月28日后发现时标历史补录；追踪窗口内新试点方案或临床/生产实质新节点时才按UPDATE入当天新增；保留原始官方链接"
     }
   }
 }
