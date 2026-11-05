@@ -1114,5 +1114,35 @@
       ],
       "rule": "每日独立检索健康中国/公共卫生政策线，不要求同篇出现疫苗词。习近平总书记相关报道、署名文章、讲话、指示或权威解读作为高优候选；用户已提供的报道必须核对原始标题/链接并加入回归测试。区分新发布与旧文转载，健康政策关联性分析不得替代事实。"
     }
+  },
+  "monitoring_learnings_20261106": {
+    "reason": "用户11月5日补充湖南新闻，并要求近24小时港澳台与国际新闻直接入板；针对漏检扩展本地服务下钻。",
+    "samples": [
+      {
+        "date": "2026-11-04",
+        "title": "湖南流感进入上升期，多毒株活跃",
+        "url": "https://health.rednet.cn/content/646055/96/16440459.html",
+        "classification": "用户人工补录，已在11月5日归档；无新事实不重复NEW",
+        "queries": [
+          "湖南 各市州 流感 免费 配送 接种量",
+          "时令节气与健康 流感 发布会"
+        ]
+      }
+    ],
+    "additional_keywords": [
+      "商超接种站",
+      "进村入校",
+      "流动接种",
+      "全联",
+      "万家福",
+      "接种服务创新"
+    ],
+    "additional_sources": [
+      "https://www.ntpc.gov.tw/",
+      "https://www.cfs.gov.hk/tc_chi/press/press.html",
+      "https://www.info.gov.hk/gia/general/today.htm",
+      "https://www.gov.uk/government/organisations/uk-health-security-agency"
+    ],
+    "rule": "港澳台监测须下钻市县卫生局和本地接种服务；国际周报区分发布日期与数据期。公众号两系列仅作高召回线索，不替代原始官方源。"
   }
 }
