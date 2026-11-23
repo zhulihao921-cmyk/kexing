@@ -1,17 +1,17 @@
 [
   {
     "date": "2026-11-23",
-    "label": "周一日报｜周末回扫与11月23日15:05增量｜有效情报14条（NEW 13 / UPDATE 1）＋热榜3条＝17条｜漏报补录NEW1、待核实4｜155/155格独立查询、累计原站核验8/155｜原生热榜3/10可读",
-    "count": 14,
-    "total": 17,
+    "label": "周一日报｜周末回扫与11月23日15:44增量｜有效情报15条（NEW 14 / UPDATE 1）＋热榜3条＝18条｜自动NEW1、待核实5｜155/155格独立查询、累计原站核验20/155｜原生热榜本轮2/10可读",
+    "count": 15,
+    "total": 18,
     "hot_count": 3,
-    "new_count": 13,
+    "new_count": 14,
     "update_count": 1,
     "file": "archive/2026-11-23.html",
     "coverage": "partial",
     "flu_grid_checked": 155,
     "flu_provinces_complete": 31,
-    "flu_original_source_checked": 8
+    "flu_original_source_checked": 20
   },
   {
     "date": "2026-11-20",
@@ -352,4 +352,3 @@
     "file": "archive/2026-09-20.html"
   }
 ]
-
