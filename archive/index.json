@@ -1,11 +1,11 @@
 [
   {
     "date": "2026-11-23",
-    "label": "周一日报｜周末回扫｜有效情报7条（NEW 6 / UPDATE 1）＋可核实热榜0条＝7条｜原站部分覆盖，155格/18企/原生热榜待核",
-    "count": 7,
-    "total": 7,
-    "hot_count": 0,
-    "new_count": 6,
+    "label": "周一日报｜周末回扫与11月23日增量｜有效情报11条（NEW 10 / UPDATE 1）＋热榜3条＝14条｜山西23价/美国CDC/澳门流感与肠病毒｜批签发截图更新462批10419万剂｜原站仍部分覆盖",
+    "count": 11,
+    "total": 14,
+    "hot_count": 3,
+    "new_count": 10,
     "update_count": 1,
     "file": "archive/2026-11-23.html",
     "coverage": "partial"
