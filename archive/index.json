@@ -1,5 +1,17 @@
 [
   {
+    "date": "2026-11-24",
+    "label": "周二日报｜有效情报7条（NEW 7 / UPDATE 0）＋热榜0条＝7条｜重庆流感项目、WHO叙利亚cVDPV1、国家疾控医防协同｜原站92/155部分覆盖",
+    "count": 7,
+    "total": 7,
+    "hot_count": 0,
+    "new_count": 7,
+    "update_count": 0,
+    "file": "archive/2026-11-24.html",
+    "coverage": "partial",
+    "flu_original_source_checked": 92
+  },
+  {
     "date": "2026-11-23",
     "label": "周日滚动｜11月24日06:05增量核验｜有效情报27条（NEW 26 / UPDATE 1）＋热榜4条＝31条｜本轮新增2更新0｜累计原站核验92/155｜原生统一热榜3/10可读｜11月24日当日封版缺失",
     "count": 27,
