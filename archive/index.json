@@ -1,11 +1,11 @@
 [
   {
     "date": "2026-11-24",
-    "label": "周二日报｜有效情报8条（NEW 8 / UPDATE 0）＋热榜0条＝8条｜新增中检院批签发漏报补录｜原站95/155部分覆盖",
-    "count": 8,
-    "total": 8,
+    "label": "周二日报｜有效情报9条（NEW 9 / UPDATE 0）＋热榜0条＝9条｜补录WHO埃博拉PHEIC更新｜原站95/155部分覆盖",
+    "count": 9,
+    "total": 9,
     "hot_count": 0,
-    "new_count": 8,
+    "new_count": 9,
     "update_count": 0,
     "file": "archive/2026-11-24.html",
     "coverage": "partial",
@@ -39,11 +39,11 @@
   },
   {
     "date": "2026-11-20",
-    "label": "周五日报｜11月23日漏报补录“一老一小”政策及上海新就业群体免费流感接种｜有效情报13条＋当日热榜4条＝17条｜原事件日保持2026-11-20",
-    "count": 13,
-    "total": 17,
+    "label": "周五日报｜有效情报14条（NEW 14 / UPDATE 0）＋热榜4条＝18条｜补录WHO埃博拉PHEIC更新｜原事件日2026-11-20",
+    "count": 14,
+    "total": 18,
     "hot_count": 4,
-    "new_count": 13,
+    "new_count": 14,
     "update_count": 0,
     "file": "archive/2026-11-20.html",
     "coverage": "partial"
