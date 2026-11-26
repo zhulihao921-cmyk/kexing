@@ -1,11 +1,11 @@
 [
   {
     "date": "2026-11-26",
-    "label": "周四日报｜07:00封版｜有效情报0条＋热榜0条＝0条｜未取得可核验的本窗口新增，关键监测未完成｜部分覆盖",
-    "count": 0,
-    "total": 0,
+    "label": "周四日报｜08:36后补核修复｜有效情报3条＋热榜0条＝3条｜尚未完成全量核验｜部分覆盖",
+    "count": 3,
+    "total": 3,
     "hot_count": 0,
-    "new_count": 0,
+    "new_count": 3,
     "update_count": 0,
     "file": "archive/2026-11-26.html",
     "coverage": "partial"
