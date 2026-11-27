@@ -1,12 +1,12 @@
 [
   {
     "date": "2026-11-27",
-    "label": "周五07:00部分覆盖｜有效情报0条＋热榜0条＝0条｜WHO欧洲通报时间待核1条｜全量未完成",
-    "count": 0,
-    "total": 0,
+    "label": "周五11月27日补漏｜有效情报5条（NEW 4 / UPDATE 1）＋热榜0条＝5条｜中国疾控第47周两份报告、WHO欧洲、澳门群集、埃博拉UPDATE｜部分覆盖",
+    "count": 5,
+    "total": 5,
     "hot_count": 0,
-    "new_count": 0,
-    "update_count": 0,
+    "new_count": 4,
+    "update_count": 1,
     "file": "archive/2026-11-27.html",
     "coverage": "partial"
   },
