@@ -1,12 +1,12 @@
 [
   {
     "date": "2026-11-27",
-    "label": "周五11月27日补漏｜有效情报5条（NEW 4 / UPDATE 1）＋热榜0条＝5条｜中国疾控第47周两份报告、WHO欧洲、澳门群集、埃博拉UPDATE｜部分覆盖",
-    "count": 5,
-    "total": 5,
+    "label": "周五11月27日补录｜有效情报8条（NEW 6 / UPDATE 2）＋热榜0条＝8条｜中国疾控47周/GSK贺舒可获批/沃森mRNA披露/云南EV71背景｜部分覆盖",
+    "count": 8,
+    "total": 8,
     "hot_count": 0,
-    "new_count": 4,
-    "update_count": 1,
+    "new_count": 6,
+    "update_count": 2,
     "file": "archive/2026-11-27.html",
     "coverage": "partial"
   },
